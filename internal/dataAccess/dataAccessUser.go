@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*models.User, error) {
@@ -19,12 +20,19 @@ func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*m
 		Email:          userData.Email,
 	}
 
-	result, err := coll.InsertOne(context.TODO(), data)
+	_, err := coll.InsertOne(context.TODO(), data)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
-	log.Println(result)
+
+	user := bson.D{{"guid", userData.GUID}, {"chatrooms", primitive.A{}}}
+	_, err = dao.mongoConnection.Database("ringo").Collection("chatrooms").InsertOne(context.TODO(), user)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
 	return &userData, nil
 }
 func (dao *DataAccess) UpdateUsername(ctx context.Context, userData models.User) error {
