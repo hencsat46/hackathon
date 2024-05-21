@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"hackathon/exceptions"
+	"hackathon/pkg/exceptions"
 
 	"github.com/gofiber/fiber/v2"
 )

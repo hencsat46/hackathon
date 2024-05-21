@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"hackathon/pkg/config"
+	e "hackathon/pkg/exceptions"
 	"log/slog"
 	"time"
 
@@ -22,9 +23,8 @@ func New(cfg *config.Config) *JWT {
 
 func (j *JWT) CreateToken(guid string) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
-		"guid":      guid,
-		"exp":       time.Now().Add(j.expTime).Unix(),
-		"createdAt": time.Now().Unix(),
+		"guid": guid,
+		"exp":  time.Now().Add(j.expTime).Unix(),
 	})
 
 	stringToken, err := token.SignedString([]byte(j.secret))
@@ -35,8 +35,15 @@ func (j *JWT) CreateToken(guid string) string {
 	return stringToken
 }
 
-func (f *JWT) ValidateToken(tokenString string) bool {
-	// Parse token from provided string.
+func (j *JWT) Validate(tokenString, guid string) bool {
+	valid, uid := j.validateToken(tokenString)
+	if !valid || uid != guid {
+		return false
+	}
+	return true
+}
+
+func (j *JWT) validateToken(tokenString string) (bool, string) {
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
 		_, ok := t.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
@@ -48,7 +55,7 @@ func (f *JWT) ValidateToken(tokenString string) bool {
 	// Check if it is valid.
 	if err != nil || !token.Valid {
 		slog.Error(err.Error())
-		return "", false
+		return false, ""
 	}
 
 	// Extract guid from claims.
@@ -57,8 +64,8 @@ func (f *JWT) ValidateToken(tokenString string) bool {
 	id := claims["guid"]
 	guid, ok := id.(string)
 	if !ok {
-		return "", false
+		return false, ""
 	}
 
-	return guid, true
+	return true, guid
 }
