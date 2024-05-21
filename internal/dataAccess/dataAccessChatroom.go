@@ -2,15 +2,17 @@ package dataaccess
 
 import (
 	"context"
+	"fmt"
 	"hackathon/migrations"
 	"hackathon/models"
-	"log"
+	"log/slog"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroomData models.Chatroom) error {
+	slog.Debug(fmt.Sprintf("creating chatroom %v\n", chatroomData))
 
 	mongoChatroom := migrations.MongoChatroom{
 		ChatroomId: chatroomData.ChatroomId,
@@ -26,9 +28,10 @@ func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroomData models.C
 
 	_, err := coll.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 		return err
 	}
+
 
 	coll = dao.mongoConnection.Database("ringo").Collection("messages")
 
@@ -38,10 +41,11 @@ func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroomData models.C
 		log.Println(err)
 		return err
 	}
-
 	return nil
 }
+
 func (dao *DataAccess) UpdateChatroom(ctx context.Context, chatroomData models.Chatroom) error {
+	slog.Debug(fmt.Sprintf("updating chatroom %v\n", chatroomData))
 
 	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 
@@ -49,25 +53,25 @@ func (dao *DataAccess) UpdateChatroom(ctx context.Context, chatroomData models.C
 
 	update := bson.D{{"$set", bson.D{{"chatrooms.$.name", chatroomData.Name}}}}
 
-	result, err := coll.UpdateOne(context.TODO(), filter, update)
+	_, err := coll.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 		return err
 	}
 
-	log.Println(result)
 	return nil
 }
+
 func (dao *DataAccess) DeleteChatroom(ctx context.Context, chatroomData models.Chatroom) error {
+	slog.Debug(fmt.Sprintf("deleting chatroom %v\n", chatroomData))
 	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 
 	filter := bson.D{{"guid", chatroomData.OwnerGUID}, {"chatrooms.ChatroomId", chatroomData.ChatroomId}}
 
-	result, err := coll.DeleteOne(context.TODO(), filter)
+	_, err := coll.DeleteOne(context.TODO(), filter)
 	if err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 		return err
 	}
-	log.Println(result)
 	return nil
 }
