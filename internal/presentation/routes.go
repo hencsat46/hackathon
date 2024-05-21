@@ -36,14 +36,14 @@ func (h *HTTPhandler) BindRoutesAndMiddlewares() {
 		ctxChatroom, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 		defer cancel()
 
-		if chatroom := h.WsBusiness.GetChatroom(ctxChatroom, chatroomData); chatroom == nil {
+		if _, err := h.WsBusiness.GetChatroom(ctxChatroom, chatroomData); err != nil {
 			return c.Status(http.StatusNotFound).JSON(Response{
 				Error:   exceptions.ErrNotFound.Error(),
 				Content: nil,
 			})
 		}
 
-		if user := h.WsBusiness.GetUser(ctxUser, userData); user == nil {
+		if _, err := h.WsBusiness.GetUser(ctxUser, userData); err != nil {
 			return c.Status(http.StatusNotFound).JSON(Response{
 				Error:   exceptions.ErrNotFound.Error(),
 				Content: nil,
