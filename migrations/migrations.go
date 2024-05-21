@@ -10,8 +10,8 @@ type MongoUsers struct {
 }
 
 type MongoChatrooms struct {
-	ChatroomId   string          `bson:"chatroom_id"`
-	ChatroomData []MongoChatroom `bson:"chatroom_data"`
+	ChatroomId   string         `bson:"chatroom_id"`
+	ChatroomData []MongoMessage `bson:"chatroom_data"`
 }
 
 type MongoChatroomData struct {
