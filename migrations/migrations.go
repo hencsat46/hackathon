@@ -23,6 +23,7 @@ type MongoChatroomData struct {
 type MongoChatroom struct {
 	ChatroomId string `bson:"chatroom_id"`
 	Name       string `bson:"name"`
+	OwnerGUID  string `bson:"owner"`
 	IsPrivate  bool   `bson:"isPrivate"`
 }
 
@@ -37,6 +38,7 @@ type MongoMessage struct {
 	MessageId  string `bson:"message_id"`
 	ChatroomId string `bson:"chatroom_id"`
 	SenderGUID string `bson:"sender_guid"`
+	SenderName string `bson:"sender_name"`
 	Content    string `bson:"content"`
 	Image      bool   `bson:"image"`
 }

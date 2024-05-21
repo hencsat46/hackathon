@@ -6,6 +6,16 @@ import (
 	"log/slog"
 )
 
+func (b *Business) FetchMessagesForChatroom(ctx context.Context, chatroomData models.Chatroom) ([]models.Message, error) {
+	messages, err := b.MessageDataAccess.FetchMessagesForChatroom(ctx, chatroomData)
+	if err != nil {
+		slog.Debug(err.Error())
+		return nil, err
+	}
+
+	return messages, nil
+}
+
 func (b *Business) CreateMessage(ctx context.Context, messageData models.Message) error {
 	if err := b.MessageDataAccess.CreateMessage(ctx, messageData); err != nil {
 		slog.Debug(err.Error())

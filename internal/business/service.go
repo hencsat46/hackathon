@@ -27,6 +27,7 @@ type IDataAccessUser interface {
 }
 
 type IDataAccessMessage interface {
+	FetchMessagesForChatroom(ctx context.Context, chatroomData models.Chatroom) ([]models.Message, error)
 	CreateMessage(ctx context.Context, messageData models.Message) error
 	UpdateMessage(ctx context.Context, messageData models.Message) error
 	DeleteMessage(ctx context.Context, messageData models.Message) error

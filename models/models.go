@@ -16,17 +16,17 @@ type User struct {
 }
 
 type Message struct {
-	MessageId  string
-	SenderGUID string
-	SenderName string
-	Content    string
-	Image      bool
-	ChatroomId string
+	MessageId  string `bson:"message_id"`
+	ChatroomId string `bson:"chatroom_id"`
+	SenderGUID string `bson:"sender_guid"`
+	SenderName string `bson:"sender_name"`
+	Content    string `bson:"content"`
+	Image      bool   `bson:"image"`
 }
 
 type Chatroom struct {
-	ChatroomId string
-	Name       string
-	OwnerGUID  string
-	IsPrivate  bool
+	ChatroomId string `bson:"chatroom_id"`
+	Name       string `bson:"name"`
+	OwnerGUID  string `bson:"owner"`
+	IsPrivate  bool   `bson:"isPrivate"`
 }

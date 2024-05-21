@@ -29,7 +29,7 @@ type IBusinessWS interface {
 
 type IBusinessMessage interface {
 	CreateMessage(ctx context.Context, messageData models.Message) error
-	FetchMessagesForChatroom(ctx context.Context, messageData models.Message) ([]models.Message, error)
+	FetchMessagesForChatroom(ctx context.Context, chatroomData models.Chatroom) ([]models.Message, error)
 	UpdateMessage(ctx context.Context, messageData models.Message) error
 	DeleteMessage(ctx context.Context, messageData models.Message) error
 }

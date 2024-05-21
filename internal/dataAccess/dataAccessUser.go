@@ -11,6 +11,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+func (dao *DataAccess) FetchUserChatrooms(ctx context.Context, userData models.User) ([]models.Chatroom, error) {
+	var chatrooms []models.Chatroom
+
+	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
+
+	filter := bson.D{{"guid", userData.GUID}}
+
+	if err := coll.FindOne(context.TODO(), filter).Decode(&chatrooms); err != nil {
+		slog.Debug(err.Error())
+		return nil, err
+	}
+
+	return chatrooms, nil
+}
+
 func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*models.User, error) {
 	slog.Debug(fmt.Sprintf("creating user %v\n", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")

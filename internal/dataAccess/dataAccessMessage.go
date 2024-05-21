@@ -9,6 +9,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+func (dao *DataAccess) FetchMessagesForChatroom(ctx context.Context, chatroomData models.Chatroom) ([]models.Message, error) {
+	var messages []models.Message
+
+	coll := dao.mongoConnection.Database("ringo").Collection("messages")
+
+	filter := bson.D{{"chatroom_id", chatroomData.ChatroomId}}
+
+	if err := coll.FindOne(context.TODO(), filter).Decode(&messages); err != nil {
+		slog.Debug(err.Error())
+		return nil, err
+	}
+
+	return messages, nil
+}
+
 func (dao *DataAccess) CreateMessage(ctx context.Context, messageData models.Message) error {
 	coll := dao.mongoConnection.Database("ringo").Collection("messages")
 
@@ -18,6 +33,7 @@ func (dao *DataAccess) CreateMessage(ctx context.Context, messageData models.Mes
 		MessageId:  messageData.MessageId,
 		ChatroomId: messageData.ChatroomId,
 		SenderGUID: messageData.SenderGUID,
+		SenderName: messageData.SenderName,
 		Content:    messageData.Content,
 		Image:      messageData.Image,
 	}
