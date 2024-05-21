@@ -3,8 +3,10 @@ package handlers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"hackathon/exceptions"
 	"hackathon/models"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -15,11 +17,13 @@ func (h *HTTPhandler) createChatroom(c *fiber.Ctx) error {
 	var request Chatroom
 
 	if err := c.BodyParser(&request); err != nil {
+		slog.Debug(err.Error())
 		return c.Status(http.StatusBadRequest).JSON(Response{
 			Error:   exceptions.ErrBadRequest.Error(),
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("create chatroom endpoint called: %v\n", request))
 
 	chatroomData := models.Chatroom{
 		ChatroomId:        request.ID,
@@ -33,6 +37,7 @@ func (h *HTTPhandler) createChatroom(c *fiber.Ctx) error {
 	defer cancel()
 
 	if err := h.ChatroomBusiness.CreateChatroom(ctx, chatroomData); err != nil {
+		slog.Debug(err.Error())
 		return c.Status(http.StatusInternalServerError).JSON(Response{
 			Error:   exceptions.ErrInternalServerError.Error(),
 			Content: nil,
@@ -49,11 +54,13 @@ func (h *HTTPhandler) updateChatroom(c *fiber.Ctx) error {
 	var request Chatroom
 
 	if err := c.BodyParser(&request); err != nil {
+		slog.Debug(err.Error())
 		return c.Status(http.StatusBadRequest).JSON(Response{
 			Error:   exceptions.ErrBadRequest.Error(),
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("update chatroom endpoint called: %v\n", request))
 
 	chatroomData := models.Chatroom{
 		ChatroomId:        request.ID,
@@ -67,6 +74,7 @@ func (h *HTTPhandler) updateChatroom(c *fiber.Ctx) error {
 	defer cancel()
 
 	if err := h.ChatroomBusiness.UpdateChatroom(ctx, chatroomData); err != nil {
+		slog.Debug(err.Error())
 		if errors.Is(err, exceptions.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(Response{
 				Error:   exceptions.ErrNotFound.Error(),
@@ -94,6 +102,7 @@ func (h *HTTPhandler) deleteChatroom(c *fiber.Ctx) error {
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("delete chatroom endpoint called: %v\n", request))
 
 	chatroomData := models.Chatroom{
 		ChatroomId: request.ID,
@@ -103,6 +112,7 @@ func (h *HTTPhandler) deleteChatroom(c *fiber.Ctx) error {
 	defer cancel()
 
 	if err := h.ChatroomBusiness.DeleteChatroom(ctx, chatroomData); err != nil {
+		slog.Debug(err.Error())
 		if errors.Is(err, exceptions.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(Response{
 				Error:   exceptions.ErrNotFound.Error(),

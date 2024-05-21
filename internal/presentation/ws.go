@@ -20,6 +20,7 @@ func (h *HTTPhandler) listenUserMessage(c *websocket.Conn, cid string, guid stri
 	for {
 		msg := &entities.Message{}
 		if err := c.ReadJSON(msg); err != nil {
+			slog.Debug(err.Error())
 			delete(h.hub[cid].Participants, guid)
 			return
 		}

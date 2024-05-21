@@ -3,6 +3,8 @@ package handlers
 import (
 	"context"
 	"errors"
+	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -22,6 +24,7 @@ func (h *HTTPhandler) UserMessages(c *fiber.Ctx) error {
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("fetch user messages endpoint called: %v, %v\n", guid, chatroomId))
 
 	messageData := models.Message{
 		SenderGUID: guid,
@@ -33,6 +36,7 @@ func (h *HTTPhandler) UserMessages(c *fiber.Ctx) error {
 
 	messages, err := h.MessageBusiness.UserMessages(ctx, messageData)
 	if err != nil {
+		slog.Debug(err.Error())
 		if errors.Is(err, exceptions.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(Response{
 				Error:   exceptions.ErrNotFound.Error(),
@@ -61,6 +65,7 @@ func (h *HTTPhandler) updateMessage(c *fiber.Ctx) error {
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("update message endpoint called: %v\n", request))
 
 	messageData := models.Message{
 		MessageId: request.ID,
@@ -71,6 +76,7 @@ func (h *HTTPhandler) updateMessage(c *fiber.Ctx) error {
 	defer cancel()
 
 	if err := h.MessageBusiness.UpdateMessage(ctx, messageData); err != nil {
+		slog.Debug(err.Error())
 		if errors.Is(err, exceptions.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(Response{
 				Error:   exceptions.ErrNotFound.Error(),
@@ -99,6 +105,7 @@ func (h *HTTPhandler) DeleteMessage(c *fiber.Ctx) error {
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("delete message endpoint called: %v\n", request))
 
 	messageData := models.Message{
 		MessageId: request.ID,
@@ -108,6 +115,7 @@ func (h *HTTPhandler) DeleteMessage(c *fiber.Ctx) error {
 	defer cancel()
 
 	if err := h.MessageBusiness.UpdateMessage(ctx, messageData); err != nil {
+		slog.Debug(err.Error())
 		if errors.Is(err, exceptions.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(Response{
 				Error:   exceptions.ErrNotFound.Error(),

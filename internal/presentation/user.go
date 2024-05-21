@@ -3,8 +3,10 @@ package handlers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"hackathon/models"
 	"log"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -23,6 +25,7 @@ func (h *HTTPhandler) createUser(c *fiber.Ctx) error {
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("create user endpoint called: %v\n", userDTO))
 
 	userEntity := models.User{
 		Username:       userDTO.Username,
@@ -34,6 +37,7 @@ func (h *HTTPhandler) createUser(c *fiber.Ctx) error {
 	defer cancel()
 
 	challenData, err := h.UserBusiness.CreateUser(ctx, userEntity)
+	slog.Debug(err.Error())
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(Response{
 			Error:   exceptions.ErrInternalServerError.Error(),
@@ -59,6 +63,7 @@ func (h *HTTPhandler) updateUsername(c *fiber.Ctx) error {
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("update username endpoint called: %v\n", userDTO))
 
 	userEntity := models.User{
 		GUID:     userDTO.GUID,
@@ -69,6 +74,7 @@ func (h *HTTPhandler) updateUsername(c *fiber.Ctx) error {
 	defer cancel()
 
 	if err := h.UserBusiness.UpdateUsername(ctx, userEntity); err != nil {
+		slog.Debug(err.Error())
 		return c.Status(http.StatusInternalServerError).JSON(Response{
 			Error:   exceptions.ErrInternalServerError.Error(),
 			Content: nil,
@@ -85,12 +91,13 @@ func (h *HTTPhandler) updateEmail(c *fiber.Ctx) error {
 	userDTO := new(User)
 
 	if err := c.BodyParser(userDTO); err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 		return c.Status(http.StatusBadRequest).JSON(Response{
 			Error:   exceptions.ErrBadRequest.Error(),
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("update email endpoint called: %v\n", userDTO))
 
 	userEntity := models.User{
 		GUID:  userDTO.GUID,
@@ -101,6 +108,7 @@ func (h *HTTPhandler) updateEmail(c *fiber.Ctx) error {
 	defer cancel()
 
 	if err := h.UserBusiness.UpdateEmail(ctx, userEntity); err != nil {
+		slog.Debug(err.Error())
 		return c.Status(http.StatusInternalServerError).JSON(Response{
 			Error:   exceptions.ErrInternalServerError.Error(),
 			Content: nil,
@@ -123,6 +131,7 @@ func (h *HTTPhandler) updatePassword(c *fiber.Ctx) error {
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("update password endpoint called: %v\n", userDTO))
 
 	userEntity := models.User{
 		GUID:              userDTO.GUID,
@@ -134,6 +143,7 @@ func (h *HTTPhandler) updatePassword(c *fiber.Ctx) error {
 	defer cancel()
 
 	if err := h.UserBusiness.UpdatePassword(ctx, userEntity); err != nil {
+		slog.Debug(err.Error())
 		if errors.Is(err, exceptions.ErrPasswordIncorrect) {
 			return c.Status(http.StatusBadRequest).JSON(Response{
 				Error:   exceptions.ErrPasswordIncorrect.Error(),
@@ -162,6 +172,7 @@ func (h *HTTPhandler) DeleteUser(c *fiber.Ctx) error {
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("delete user endpoint called: %v\n", userDTO))
 
 	userEntity := models.User{
 		GUID: userDTO.GUID,
@@ -171,6 +182,7 @@ func (h *HTTPhandler) DeleteUser(c *fiber.Ctx) error {
 	defer cancel()
 
 	if err := h.UserBusiness.DeleteUser(ctx, userEntity); err != nil {
+		slog.Debug(err.Error())
 		return c.Status(http.StatusInternalServerError).JSON(Response{
 			Error:   exceptions.ErrInternalServerError.Error(),
 			Content: nil,
@@ -192,6 +204,7 @@ func (h *HTTPhandler) fetchUserChatrooms(c *fiber.Ctx) error {
 			Content: nil,
 		})
 	}
+	slog.Debug(fmt.Sprintf("fetch user's chatrooms endpoint called: %v\n", userGUID))
 
 	chatroomData := models.Chatroom{
 		OwnerGUID: userGUID,
@@ -201,6 +214,7 @@ func (h *HTTPhandler) fetchUserChatrooms(c *fiber.Ctx) error {
 
 	chatrooms, err := h.UserBusiness.FetchUserChatrooms(ctx, chatroomData)
 	if err != nil {
+		slog.Debug(err.Error())
 		if errors.Is(err, exceptions.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(Response{
 				Error:   exceptions.ErrNotFound.Error(),
