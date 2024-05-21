@@ -8,6 +8,7 @@ import (
 	"log/slog"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroomData models.Chatroom) error {
@@ -31,6 +32,15 @@ func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroomData models.C
 		return err
 	}
 
+
+	coll = dao.mongoConnection.Database("ringo").Collection("messages")
+
+	data := bson.D{{"chatroom_id", chatroomData.ChatroomId}, {"chatroom_data", primitive.A{}}}
+
+	if _, err := coll.InsertOne(context.TODO(), data); err != nil {
+		log.Println(err)
+		return err
+	}
 	return nil
 }
 
