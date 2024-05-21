@@ -65,7 +65,7 @@ func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 	userRoutes.Put("/updateEmail", h.jwtMiddleware.ValidateToken(h.updateEmail))
 	userRoutes.Put("/updatePassword", h.jwtMiddleware.ValidateToken(h.updatePassword))
 	userRoutes.Delete("/delete", h.jwtMiddleware.ValidateToken(h.deleteUser))
-	userRoutes.Get("/userChatrooms", h.jwtMiddleware.ValidateToken(h.fetchUserChatrooms))
+	userRoutes.Get("/userChatrooms/:guid", h.jwtMiddleware.ValidateToken(h.fetchUserChatrooms))
 
 	wsRoutes.Get("/:GUID/:cid", h.jwtMiddleware.ValidateToken(websocket.New(h.handleWS)))
 
@@ -73,6 +73,7 @@ func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 	chatroomRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.updateChatroom))
 	chatroomRoutes.Delete("/", h.jwtMiddleware.ValidateToken(h.deleteChatroom))
 
+	messageRoutes.Get("/:cid", h.jwtMiddleware.ValidateToken(h.fetchMessagesForChatroom))
 	messageRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.updateMessage))
 	messageRoutes.Delete("/", h.jwtMiddleware.ValidateToken(h.DeleteMessage))
 }
