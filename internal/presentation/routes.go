@@ -7,10 +7,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 )
 
-func (h *HTTPhandler) BindRoutesAndMiddlewares() {
+func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 	h.app.Use("/ws", func(c *fiber.Ctx) error {
 		userGUID := c.Params("GUID")
 		chatroomId := c.Params("chatroomID")
@@ -60,4 +61,18 @@ func (h *HTTPhandler) BindRoutesAndMiddlewares() {
 	wsRoutes := h.app.Group("/ws")
 
 	userRoutes.Post("/create", h.createUser)
+	userRoutes.Put("/updateUsername", h.jwtMiddleware.ValidateToken(h.updateUsername))
+	userRoutes.Put("/updateEmail", h.jwtMiddleware.ValidateToken(h.updateEmail))
+	userRoutes.Put("/updatePassword", h.jwtMiddleware.ValidateToken(h.updatePassword))
+	userRoutes.Delete("/delete", h.jwtMiddleware.ValidateToken(h.deleteUser))
+	userRoutes.Get("/userChatrooms", h.jwtMiddleware.ValidateToken(h.fetchUserChatrooms))
+
+	wsRoutes.Get("/:GUID/:cid", h.jwtMiddleware.ValidateToken(websocket.New(h.handleWS)))
+
+	chatroomRoutes.Post("/create", h.jwtMiddleware.ValidateToken(h.createChatroom))
+	chatroomRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.updateChatroom))
+	chatroomRoutes.Delete("/", h.jwtMiddleware.ValidateToken(h.deleteChatroom))
+
+	messageRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.updateMessage))
+	messageRoutes.Delete("/", h.jwtMiddleware.ValidateToken(h.DeleteMessage))
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"hackathon/models"
+	"hackathon/pkg/jwt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,6 +16,7 @@ type HTTPhandler struct {
 	ChatroomBusiness IBusinessChatroom
 	WsBusiness       IBusinessWS
 	hub              map[string]*models.Room
+	jwtMiddleware    *jwt.JWT
 }
 
 type IBusinessWS interface {
