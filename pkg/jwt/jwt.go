@@ -4,10 +4,18 @@ import (
 	"hackathon/pkg/config"
 	e "hackathon/pkg/exceptions"
 	"log/slog"
+	"net/http"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/valyala/fasthttp"
 )
+
+type Response struct {
+	Error   string `json:"error"`
+	Content any    `json:"content"`
+}
 
 type JWT struct {
 	secret  string
@@ -35,37 +43,39 @@ func (j *JWT) CreateToken(guid string) string {
 	return stringToken
 }
 
-func (j *JWT) Validate(tokenString, guid string) bool {
-	valid, uid := j.validateToken(tokenString)
-	if !valid || uid != guid {
-		return false
-	}
-	return true
-}
+func (j *JWT) validateToken(next fiber.Handler) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		authHeader := string(c.Request().Header.Peek(fasthttp.HeaderAuthorization))
 
-func (j *JWT) validateToken(tokenString string) (bool, string) {
-	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		_, ok := t.Method.(*jwt.SigningMethodHMAC)
-		if !ok {
-			return nil, e.ErrInvalidSigningMethod
+		if len(authHeader) == 0 {
+			return c.Status(http.StatusUnauthorized).JSON(Response{
+				Error:   e.ErrInvalidToken.Error(),
+				Content: nil,
+			})
 		}
-		return []byte(j.secret), nil
-	})
+		tokenString := authHeader[len("Bearer "):]
 
-	// Check if it is valid.
-	if err != nil || !token.Valid {
-		slog.Error(err.Error())
-		return false, ""
+		token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+			_, ok := t.Method.(*jwt.SigningMethodHMAC)
+			if !ok {
+				return nil, e.ErrInvalidSigningMethod
+			}
+			return []byte(j.secret), nil
+		})
+
+		if err != nil {
+			slog.Error(err.Error())
+			return c.Status(http.StatusUnauthorized).JSON(Response{
+				Error:   e.ErrInvalidToken.Error(),
+				Content: nil,
+			})
+		} else if !token.Valid {
+			return c.Status(http.StatusUnauthorized).JSON(Response{
+				Error:   e.ErrInvalidToken.Error(),
+				Content: nil,
+			})
+		}
+
+		return next(c)
 	}
-
-	// Extract guid from claims.
-	claims := token.Claims.(jwt.MapClaims)
-
-	id := claims["guid"]
-	guid, ok := id.(string)
-	if !ok {
-		return false, ""
-	}
-
-	return true, guid
 }

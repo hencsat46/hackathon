@@ -53,4 +53,11 @@ func (h *HTTPhandler) BindRoutesAndMiddlewares() {
 		c.Next()
 		return nil
 	})
+
+	userRoutes := h.app.Group("/user")
+	chatroomRoutes := h.app.Group("/chatroom")
+	messageRoutes := h.app.Group("/message")
+	wsRoutes := h.app.Group("/ws")
+
+	userRoutes.Post("/create", h.createUser)
 }
