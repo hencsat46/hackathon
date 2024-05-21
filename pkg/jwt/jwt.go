@@ -34,3 +34,31 @@ func (j *JWT) CreateToken(guid string) string {
 
 	return stringToken
 }
+
+func (f *JWT) ValidateToken(tokenString string) bool {
+	// Parse token from provided string.
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+		_, ok := t.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return nil, e.ErrInvalidSigningMethod
+		}
+		return []byte(j.secret), nil
+	})
+
+	// Check if it is valid.
+	if err != nil || !token.Valid {
+		slog.Error(err.Error())
+		return "", false
+	}
+
+	// Extract guid from claims.
+	claims := token.Claims.(jwt.MapClaims)
+
+	id := claims["guid"]
+	guid, ok := id.(string)
+	if !ok {
+		return "", false
+	}
+
+	return guid, true
+}
