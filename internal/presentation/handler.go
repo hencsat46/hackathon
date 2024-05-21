@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"hackathon/models"
+	"hackathon/pkg/config"
+	"hackathon/pkg/jwt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,6 +17,9 @@ type HTTPhandler struct {
 	ChatroomBusiness IBusinessChatroom
 	WsBusiness       IBusinessWS
 	hub              map[string]*models.Room
+	jwtMiddleware    *jwt.JWT
+	addr             string
+	port             string
 }
 
 type IBusinessWS interface {
@@ -44,12 +49,19 @@ type IBusinessUser interface {
 	DeleteUser(ctx context.Context, userData models.User) error
 }
 
-func NewHandler(app *fiber.App, userCh IBusinessUser, msgCh IBusinessMessage, chatroomCh IBusinessChatroom, ws IBusinessWS) *HTTPhandler {
+func NewHandler(cfg *config.Config, app *fiber.App, userCh IBusinessUser, msgCh IBusinessMessage, chatroomCh IBusinessChatroom, ws IBusinessWS) *HTTPhandler {
 	return &HTTPhandler{
 		app:              app,
 		UserBusiness:     userCh,
 		MessageBusiness:  msgCh,
 		ChatroomBusiness: chatroomCh,
 		WsBusiness:       ws,
+		addr:             cfg.Addr,
+		port:             cfg.Port,
 	}
+}
+
+func (h *HTTPhandler) Start() error {
+	h.bindRoutesAndMiddlewares()
+	return h.app.Listen(h.addr + ":" + h.port)
 }

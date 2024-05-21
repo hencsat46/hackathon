@@ -162,7 +162,7 @@ func (h *HTTPhandler) updatePassword(c *fiber.Ctx) error {
 	})
 }
 
-func (h *HTTPhandler) DeleteUser(c *fiber.Ctx) error {
+func (h *HTTPhandler) deleteUser(c *fiber.Ctx) error {
 	userDTO := new(User)
 
 	if err := c.BodyParser(userDTO); err != nil {

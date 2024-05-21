@@ -13,6 +13,8 @@ type Config struct {
 	Environment string
 	JWTsecret   string
 	ExpTime     int
+	Port        string
+	Addr        string
 }
 
 func New() *Config {
@@ -31,5 +33,7 @@ func New() *Config {
 		Environment: os.Getenv("ENV"),
 		JWTsecret:   os.Getenv("JWT"),
 		ExpTime:     t,
+		Port:        os.Getenv("PORT"),
+		Addr:        os.Getenv("ADDR"),
 	}
 }
