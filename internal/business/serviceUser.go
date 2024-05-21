@@ -16,12 +16,13 @@ func (b *business) FetchUserChatrooms(ctx context.Context, userData models.User)
 	return chatrooms, nil
 }
 
-func (b *business) CreateUser(ctx context.Context, userData models.User) error {
-	if err := b.UserDataAccess.CreateUser(ctx, userData); err != nil {
+func (b *business) CreateUser(ctx context.Context, userData models.User) (*models.User, error) {
+	user, err := b.UserDataAccess.CreateUser(ctx, userData)
+	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
-	return nil
+	return user, nil
 }
 func (b *business) UpdateUsername(ctx context.Context, userData models.User) error {
 	if err := b.UserDataAccess.UpdateUsername(ctx, userData); err != nil {
