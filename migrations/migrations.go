@@ -35,6 +35,7 @@ type MongoUser struct {
 
 type MongoMessage struct {
 	MessageId  string `bson:"message_id"`
+	ChatroomId string `bson:"chatroom_id"`
 	SenderGUID string `bson:"sender_guid"`
 	Content    string `bson:"content"`
 	Image      bool   `bson:"image"`
