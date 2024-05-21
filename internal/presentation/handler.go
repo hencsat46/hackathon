@@ -56,6 +56,8 @@ func NewHandler(cfg *config.Config, app *fiber.App, userCh IBusinessUser, msgCh 
 		MessageBusiness:  msgCh,
 		ChatroomBusiness: chatroomCh,
 		WsBusiness:       ws,
+		addr:             cfg.Addr,
+		port:             cfg.Port,
 	}
 }
 
