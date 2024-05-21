@@ -2,13 +2,17 @@ package config
 
 import (
 	"log"
+	"log/slog"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
 	Environment string
+	JWTsecret   string
+	ExpTime     int
 }
 
 func New() *Config {
@@ -16,7 +20,16 @@ func New() *Config {
 		log.Fatal(err)
 	}
 
+	time := os.Getenv("EXP")
+	t, err := strconv.Atoi(time)
+	if err != nil {
+		slog.Error(err.Error())
+		os.Exit(1)
+	}
+
 	return &Config{
 		Environment: os.Getenv("ENV"),
+		JWTsecret:   os.Getenv("JWT"),
+		ExpTime:     t,
 	}
 }
