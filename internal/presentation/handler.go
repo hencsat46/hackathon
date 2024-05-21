@@ -29,7 +29,7 @@ type IBusinessWS interface {
 
 type IBusinessMessage interface {
 	CreateMessage(ctx context.Context, messageData models.Message) error
-	FetchMessagesForChatroom(ctx context.Context, messageData models.Message) ([]models.Message, error)
+	FetchMessagesForChatroom(ctx context.Context, chatroomData models.Chatroom) ([]models.Message, error)
 	UpdateMessage(ctx context.Context, messageData models.Message) error
 	DeleteMessage(ctx context.Context, messageData models.Message) error
 }
@@ -41,7 +41,7 @@ type IBusinessChatroom interface {
 }
 
 type IBusinessUser interface {
-	FetchUserChatrooms(ctx context.Context, userData models.Chatroom) ([]models.Chatroom, error)
+	FetchUserChatrooms(ctx context.Context, userData models.User) ([]models.Chatroom, error)
 	CreateUser(ctx context.Context, userData models.User) (*models.User, error)
 	UpdateUsername(ctx context.Context, userData models.User) error
 	UpdateEmail(ctx context.Context, userData models.User) error

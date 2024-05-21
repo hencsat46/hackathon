@@ -14,6 +14,37 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func (h *HTTPhandler) fetchMessagesForChatroom(c *fiber.Ctx) error {
+	chatroomId := c.Params("cid")
+
+	chatroomData := models.Chatroom{
+		ChatroomId: chatroomId,
+	}
+
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
+	defer cancel()
+
+	messages, err := h.MessageBusiness.FetchMessagesForChatroom(ctx, chatroomData)
+	if err != nil {
+		slog.Debug(err.Error())
+		if errors.Is(err, exceptions.ErrNotFound) {
+			return c.Status(http.StatusNotFound).JSON(Response{
+				Error:   exceptions.ErrNotFound.Error(),
+				Content: nil,
+			})
+		}
+		return c.Status(http.StatusInternalServerError).JSON(Response{
+			Error:   exceptions.ErrInternalServerError.Error(),
+			Content: nil,
+		})
+	}
+
+	return c.Status(http.StatusOK).JSON(Response{
+		Error:   "nil",
+		Content: messages,
+	})
+}
+
 func (h *HTTPhandler) updateMessage(c *fiber.Ctx) error {
 	var request Message
 

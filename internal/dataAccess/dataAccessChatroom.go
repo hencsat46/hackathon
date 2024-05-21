@@ -17,6 +17,7 @@ func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroomData models.C
 	mongoChatroom := migrations.MongoChatroom{
 		ChatroomId: chatroomData.ChatroomId,
 		Name:       chatroomData.Name,
+		OwnerGUID:  chatroomData.OwnerGUID,
 		IsPrivate:  chatroomData.IsPrivate,
 	}
 

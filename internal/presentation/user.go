@@ -206,13 +206,13 @@ func (h *HTTPhandler) fetchUserChatrooms(c *fiber.Ctx) error {
 	}
 	slog.Debug(fmt.Sprintf("fetch user's chatrooms endpoint called: %v\n", userGUID))
 
-	chatroomData := models.Chatroom{
-		OwnerGUID: userGUID,
+	userData := models.User{
+		GUID: userGUID,
 	}
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
 
-	chatrooms, err := h.UserBusiness.FetchUserChatrooms(ctx, chatroomData)
+	chatrooms, err := h.UserBusiness.FetchUserChatrooms(ctx, userData)
 	if err != nil {
 		slog.Debug(err.Error())
 		if errors.Is(err, exceptions.ErrNotFound) {
