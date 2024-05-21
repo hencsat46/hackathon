@@ -13,7 +13,6 @@ import (
 )
 
 type IChallenChatroom interface {
-	FetchUserChatrooms(ctx context.Context, chatroomData models.Chatroom) ([]models.Chatroom, error)
 	CreateChatroom(ctx context.Context, chatroomData models.Chatroom) error
 	UpdateChatroom(ctx context.Context, chatroomData models.Chatroom) error
 	DeleteChatroom(ctx context.Context, chatroomData models.Chatroom) error
