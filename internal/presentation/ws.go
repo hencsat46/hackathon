@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"hackathon/internal/presentation/entities"
+	"hackathon/models"
 	"log/slog"
 
 	"github.com/gofiber/contrib/websocket"
@@ -18,13 +18,13 @@ func (h *HTTPhandler) handleWS(c *websocket.Conn) {
 
 func (h *HTTPhandler) listenUserMessage(c *websocket.Conn, cid string, guid string) {
 	for {
-		msg := &entities.Message{}
+		msg := &models.Message{}
 		if err := c.ReadJSON(msg); err != nil {
 			delete(h.hub[cid].Participants, guid)
 			return
 		}
 
-		chatroomID := msg.ChatroomID
+		chatroomID := msg.ChatroomId
 		room := h.hub[chatroomID]
 
 		for GUID, conn := range room.Participants {

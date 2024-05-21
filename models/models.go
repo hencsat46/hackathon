@@ -1,5 +1,12 @@
 package models
 
+import "github.com/gofiber/contrib/websocket"
+
+type Room struct {
+	CID          string
+	Participants map[string]*websocket.Conn
+}
+
 type User struct {
 	GUID              string
 	Username          string
