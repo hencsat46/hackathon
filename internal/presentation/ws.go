@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"context"
 	"hackathon/models"
 	"log/slog"
+	"time"
 
 	"github.com/gofiber/contrib/websocket"
 )
@@ -34,6 +36,12 @@ func (h *HTTPhandler) listenUserMessage(c *websocket.Conn, cid string, guid stri
 					slog.Error(err.Error())
 				}
 			}
+		}
+
+		ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
+		defer cancel()
+		if err := h.MessageBusiness.CreateMessage(ctx, *msg); err != nil {
+			slog.Debug(err.Error())
 		}
 	}
 }
