@@ -40,3 +40,10 @@ func NewService(chatroomDataAccess IDataAccessChatroom, userDataAccess IDataAcce
 		MessageDataAccess:  messageDataAccess,
 	}
 }
+
+func (b *Business) GetUser(ctx context.Context, userData models.User) (*models.User, error) {
+	panic("not implemented")
+}
+func (b *Business) GetChatroom(ctx context.Context, chatroomData models.Chatroom) (*models.Chatroom, error) {
+	panic("not implemented")
+}
