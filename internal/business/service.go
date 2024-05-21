@@ -27,5 +27,7 @@ type IDataAccessUser interface {
 }
 
 type IDataAccessMessage interface {
+	CreateMessage(ctx context.Context, messageData models.Message) error
+	UpdateMessage(ctx context.Context, messageData models.Message) error
+	DeleteMessage(ctx context.Context, messageData models.Message) error
 }
-

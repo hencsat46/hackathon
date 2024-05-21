@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	"hackathon/internal/presentation/entities"
+
 	"hackathon/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,17 +14,17 @@ type HTTPhandler struct {
 	MessageBusiness  IBusinessMessage
 	ChatroomBusiness IBusinessChatroom
 	WsBusiness       IBusinessWS
-	hub              map[string]*entities.Room
+	hub              map[string]*models.Room
 }
 
 type IBusinessWS interface {
-	GetUser(ctx context.Context, userData models.User) *models.User
-	GetChatroom(ctx context.Context, chatroomData models.Chatroom) *models.Chatroom
+	GetUser(ctx context.Context, userData models.User) (*models.User, error)
+	GetChatroom(ctx context.Context, chatroomData models.Chatroom) (*models.Chatroom, error)
 }
 
 type IBusinessMessage interface {
 	CreateMessage(ctx context.Context, messageData models.Message) error
-	UserMessages(ctx context.Context, messageData models.Message) ([]models.Message, error)
+	FetchMessagesForChatroom(ctx context.Context, messageData models.Message) ([]models.Message, error)
 	UpdateMessage(ctx context.Context, messageData models.Message) error
 	DeleteMessage(ctx context.Context, messageData models.Message) error
 }
