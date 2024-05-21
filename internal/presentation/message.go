@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	"hackathon/exceptions"
 	"hackathon/models"
+	"hackathon/pkg/exceptions"
 
 	"github.com/gofiber/fiber/v2"
 )

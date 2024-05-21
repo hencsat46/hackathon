@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"context"
-	"hackathon/exceptions"
 	"hackathon/models"
+	"hackathon/pkg/exceptions"
 	"net/http"
 	"time"
 

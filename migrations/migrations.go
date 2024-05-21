@@ -5,13 +5,13 @@ import (
 )
 
 type MongoUsers struct {
-	GUID      string   `bson:"guid"`
-	Chatrooms []string `bson:"chatrooms"`
+	GUID      string          `bson:"guid"`
+	Chatrooms []MongoChatroom `bson:"chatrooms"`
 }
 
 type MongoChatrooms struct {
-	ChatroomId   string              `bson:"chatroom_id"`
-	ChatroomData []MongoChatroomData `bson:"chatroom_data"`
+	ChatroomId   string          `bson:"chatroom_id"`
+	ChatroomData []MongoChatroom `bson:"chatroom_data"`
 }
 
 type MongoChatroomData struct {
@@ -21,11 +21,9 @@ type MongoChatroomData struct {
 }
 
 type MongoChatroom struct {
-	ChatroomId        string `bson:"chatroom_id"`
-	Name              string `bson:"name"`
-	OwnerGUID         string `bson:"owner"`
-	IsPrivate         bool   `bson:"isPrivate"`
-	ParticipantsLimit int    `bson:"participants_limit"`
+	ChatroomId string `bson:"chatroom_id"`
+	Name       string `bson:"name"`
+	IsPrivate  bool   `bson:"isPrivate"`
 }
 
 type MongoUser struct {
