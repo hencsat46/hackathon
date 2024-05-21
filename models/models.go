@@ -24,9 +24,8 @@ type Message struct {
 }
 
 type Chatroom struct {
-	ChatroomId        string
-	Name              string
-	OwnerGUID         string
-	IsPrivate         bool
-	ParticipantsLimit int
+	ChatroomId string
+	Name       string
+	OwnerGUID  string
+	IsPrivate  bool
 }

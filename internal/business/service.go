@@ -5,7 +5,7 @@ import (
 	"hackathon/models"
 )
 
-type business struct {
+type Business struct {
 	ChatroomDataAccess IDataAccessChatroom
 	UserDataAccess     IDataAccessUser
 	MessageDataAccess  IDataAccessMessage
@@ -30,4 +30,12 @@ type IDataAccessMessage interface {
 	CreateMessage(ctx context.Context, messageData models.Message) error
 	UpdateMessage(ctx context.Context, messageData models.Message) error
 	DeleteMessage(ctx context.Context, messageData models.Message) error
+}
+
+func NewService(chatroomDataAccess IDataAccessChatroom, userDataAccess IDataAccessUser, messageDataAccess IDataAccessMessage) *Business {
+	return &Business{
+		ChatroomDataAccess: chatroomDataAccess,
+		UserDataAccess:     userDataAccess,
+		MessageDataAccess:  messageDataAccess,
+	}
 }

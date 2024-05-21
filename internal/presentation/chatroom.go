@@ -26,11 +26,10 @@ func (h *HTTPhandler) createChatroom(c *fiber.Ctx) error {
 	slog.Debug(fmt.Sprintf("create chatroom endpoint called: %v\n", request))
 
 	chatroomData := models.Chatroom{
-		ChatroomId:        request.ID,
-		Name:              request.Name,
-		OwnerGUID:         request.OwnerGUID,
-		IsPrivate:         request.IsPrivate,
-		ParticipantsLimit: request.ParticipantsLimit,
+		ChatroomId: request.ID,
+		Name:       request.Name,
+		OwnerGUID:  request.OwnerGUID,
+		IsPrivate:  request.IsPrivate,
 	}
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
@@ -63,11 +62,10 @@ func (h *HTTPhandler) updateChatroom(c *fiber.Ctx) error {
 	slog.Debug(fmt.Sprintf("update chatroom endpoint called: %v\n", request))
 
 	chatroomData := models.Chatroom{
-		ChatroomId:        request.ID,
-		Name:              request.Name,
-		OwnerGUID:         request.OwnerGUID,
-		IsPrivate:         request.IsPrivate,
-		ParticipantsLimit: request.ParticipantsLimit,
+		ChatroomId: request.ID,
+		Name:       request.Name,
+		OwnerGUID:  request.OwnerGUID,
+		IsPrivate:  request.IsPrivate,
 	}
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
