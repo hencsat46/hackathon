@@ -14,7 +14,6 @@ type Message struct {
 	Content    string
 	Image      bool
 	ChatroomId string
-	Limit      int
 }
 
 type Chatroom struct {

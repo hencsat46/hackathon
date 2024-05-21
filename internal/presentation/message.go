@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"strconv"
 	"time"
 
 	"hackathon/exceptions"
@@ -13,20 +12,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type IChallenMessage interface {
-	UserMessages(ctx context.Context, messageData models.Message) ([]models.Message, error)
-	UpdateMessage(ctx context.Context, messageData models.Message) error
-	DeleteMessage(ctx context.Context, messageData models.Message) error
-}
-
 func (h *HTTPhandler) UserMessages(c *fiber.Ctx) error {
 	guid := c.Query("GUID")
-	limit := c.Query("limit")
 	chatroomId := c.Query("CID")
 
-	limitInt, err := strconv.Atoi(limit)
-
-	if len(guid) == 0 || len(limit) == 0 || err != nil {
+	if len(guid) == 0 {
 		return c.Status(http.StatusBadRequest).JSON(Response{
 			Error:   exceptions.ErrBadRequest.Error(),
 			Content: nil,
@@ -36,13 +26,12 @@ func (h *HTTPhandler) UserMessages(c *fiber.Ctx) error {
 	messageData := models.Message{
 		SenderGUID: guid,
 		ChatroomId: chatroomId,
-		Limit:      limitInt,
 	}
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
 
-	messages, err := h.MessageChallen.UserMessages(ctx, messageData)
+	messages, err := h.MessageBusiness.UserMessages(ctx, messageData)
 	if err != nil {
 		if errors.Is(err, exceptions.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(Response{
@@ -81,7 +70,7 @@ func (h *HTTPhandler) updateMessage(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
 
-	if err := h.MessageChallen.UpdateMessage(ctx, messageData); err != nil {
+	if err := h.MessageBusiness.UpdateMessage(ctx, messageData); err != nil {
 		if errors.Is(err, exceptions.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(Response{
 				Error:   exceptions.ErrNotFound.Error(),
@@ -118,7 +107,7 @@ func (h *HTTPhandler) DeleteMessage(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
 
-	if err := h.MessageChallen.UpdateMessage(ctx, messageData); err != nil {
+	if err := h.MessageBusiness.UpdateMessage(ctx, messageData); err != nil {
 		if errors.Is(err, exceptions.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(Response{
 				Error:   exceptions.ErrNotFound.Error(),
