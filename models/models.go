@@ -18,6 +18,7 @@ type User struct {
 type Message struct {
 	MessageId  string
 	SenderGUID string
+	SenderName string
 	Content    string
 	Image      bool
 	ChatroomId string
