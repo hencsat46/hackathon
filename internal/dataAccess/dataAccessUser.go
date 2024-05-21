@@ -2,15 +2,17 @@ package dataaccess
 
 import (
 	"context"
+	"fmt"
 	"hackathon/migrations"
 	"hackathon/models"
-	"log"
+	"log/slog"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*models.User, error) {
+	slog.Debug(fmt.Sprintf("creating user %v\n", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
 	data := migrations.MongoUser{
@@ -22,74 +24,78 @@ func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*m
 
 	_, err := coll.InsertOne(context.TODO(), data)
 	if err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 		return nil, err
 	}
 
 	user := bson.D{{"guid", userData.GUID}, {"chatrooms", primitive.A{}}}
 	_, err = dao.mongoConnection.Database("ringo").Collection("chatrooms").InsertOne(context.TODO(), user)
 	if err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 		return nil, err
 	}
 
 	return &userData, nil
 }
+
 func (dao *DataAccess) UpdateUsername(ctx context.Context, userData models.User) error {
+	slog.Debug(fmt.Sprintf("updating username %v\n", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
 	filter := bson.D{{"guid", userData.GUID}}
 
 	update := bson.D{{"$set", bson.D{{"username", userData.Username}}}}
 
-	result, err := coll.UpdateOne(context.TODO(), filter, update)
+	_, err := coll.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 		return err
 	}
-	log.Println(result)
 	return nil
 }
+
 func (dao *DataAccess) UpdateEmail(ctx context.Context, userData models.User) error {
+	slog.Debug(fmt.Sprintf("updating email %v\n", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
 	filter := bson.D{{"guid", userData.GUID}}
 
 	update := bson.D{{"$set", bson.D{{"email", userData.Email}}}}
 
-	result, err := coll.UpdateOne(context.TODO(), filter, update)
+	_, err := coll.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 		return err
 	}
-	log.Println(result)
 	return nil
 }
+
 func (dao *DataAccess) UpdatePassword(ctx context.Context, userData models.User) error {
+	slog.Debug(fmt.Sprintf("updating password %v\n", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
 	filter := bson.D{{"guid", userData.GUID}}
 
 	update := bson.D{{"$set", bson.D{{"password", userData.HashedPassword}}}}
 
-	result, err := coll.UpdateOne(context.TODO(), filter, update)
+	_, err := coll.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 		return err
 	}
-	log.Println(result)
 	return nil
 }
+
 func (dao *DataAccess) DeleteUser(ctx context.Context, userData models.User) error {
+	slog.Debug(fmt.Sprintf("deleting user %v\n", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
 	filter := bson.D{{"guid", userData.GUID}}
 
-	result, err := coll.DeleteOne(context.TODO(), filter)
+	_, err := coll.DeleteOne(context.TODO(), filter)
 	if err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 		return err
 	}
-	log.Println(result)
 	return nil
 }
