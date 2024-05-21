@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	Environment string
+	JWTsecret   string
 }
 
 func New() *Config {
@@ -18,5 +19,6 @@ func New() *Config {
 
 	return &Config{
 		Environment: os.Getenv("ENV"),
+		JWTsecret:   os.Getenv("JWT"),
 	}
 }
