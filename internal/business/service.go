@@ -28,3 +28,4 @@ type IDataAccessUser interface {
 
 type IDataAccessMessage interface {
 }
+
