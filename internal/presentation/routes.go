@@ -61,6 +61,7 @@ func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 	wsRoutes := h.app.Group("/ws")
 
 	userRoutes.Post("/create", h.createUser)
+	userRoutes.Post("login", h.loginUser)
 	userRoutes.Put("/updateUsername", h.jwtMiddleware.ValidateToken(h.updateUsername))
 	userRoutes.Put("/updateEmail", h.jwtMiddleware.ValidateToken(h.updateEmail))
 	userRoutes.Put("/updatePassword", h.jwtMiddleware.ValidateToken(h.updatePassword))

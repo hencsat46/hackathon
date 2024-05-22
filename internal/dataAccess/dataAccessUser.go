@@ -26,6 +26,27 @@ func (dao *DataAccess) FetchUserChatrooms(ctx context.Context, userData models.U
 	return chatrooms, nil
 }
 
+func (dao *DataAccess) LoginUser(ctx context.Context, userData models.User) (*models.User, error) {
+	slog.Debug(fmt.Sprintf("login user %v\n", userData))
+	coll := dao.mongoConnection.Database("ringo").Collection("users")
+
+	filter := bson.D{{"username", userData.Username}, {"password", userData.HashedPassword}}
+
+	mongoData := new(migrations.MongoUser)
+
+	err := coll.FindOne(context.TODO(), filter).Decode(&mongoData)
+	if err != nil {
+		slog.Debug(err.Error())
+		return nil, err
+	}
+
+	returnValue := &models.User{
+		GUID: mongoData.GUID,
+	}
+
+	return returnValue, nil
+}
+
 func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*models.User, error) {
 	slog.Debug(fmt.Sprintf("creating user %v\n", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
