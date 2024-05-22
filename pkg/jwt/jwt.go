@@ -1,11 +1,12 @@
 package jwt
 
 import (
-	e "hackathon/exceptions"
-	"hackathon/pkg/config"
 	"log/slog"
 	"net/http"
 	"time"
+
+	e "hackathon/exceptions"
+	"hackathon/pkg/config"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"

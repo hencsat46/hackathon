@@ -24,7 +24,7 @@ type HTTPhandler struct {
 	port string
 }
 
-func NewHandler(cfg *config.Config, app *fiber.App, loader hubmanager.ILoader, messageBusiness messagehttphandler.IBusinessMessage, userBusiness userhttphandler.IBusinessUser, jwt *jwt.JWT, wsBusiness wsHandler.IBusinessWS) *HTTPhandler {
+func NewHandler(cfg *config.Config, app *fiber.App, loader hubmanager.ILoader, messageBusiness messagehttphandler.IBusinessMessage, userBusiness userhttphandler.IBusinessUser, wsBusiness wsHandler.IBusinessWS, jwt *jwt.JWT) *HTTPhandler {
 	hubmngr := hubmanager.New(loader)
 	return &HTTPhandler{
 		HubManager:      hubmngr,
