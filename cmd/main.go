@@ -6,6 +6,7 @@ import (
 	dataaccess "hackathon/internal/dataAccess"
 	handlers "hackathon/internal/presentation"
 	"hackathon/pkg/config"
+	"hackathon/pkg/jwt"
 	"hackathon/pkg/logger"
 	"log/slog"
 	"os"
@@ -26,7 +27,7 @@ func main() {
 	}
 	dataaccess := dataaccess.NewDataAccess(mng)
 	business := business.NewService(dataaccess, dataaccess, dataaccess)
-	pres := handlers.NewHandler(cfg, fiber.New(), business, business, business, business)
+	pres := handlers.NewHandler(cfg, fiber.New(), business, business, business, business, jwt.New(cfg))
 
 	if err := pres.Start(); err != nil {
 		slog.Error(err.Error())
