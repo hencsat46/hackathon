@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"log"
 	"log/slog"
 
 	"hackathon/models"
@@ -75,11 +76,13 @@ func (h *HTTPhandler) Start() error {
 	rms := make([]models.Room, 0, len(rooms))
 
 	for _, r := range rooms {
+		log.Println(r)
 		rms = append(rms, models.Room{CID: r.ChatroomId, Participants: make(map[string]*websocket.Conn)})
 	}
 
 	for _, r := range rms {
 		h.hub[r.CID] = &r
+		log.Println(r)
 	}
 
 	h.bindRoutesAndMiddlewares()

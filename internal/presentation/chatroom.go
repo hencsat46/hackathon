@@ -114,6 +114,7 @@ func (h *HTTPhandler) deleteChatroom(c *fiber.Ctx) error {
 
 	chatroomData := models.Chatroom{
 		ChatroomId: request.ID,
+		OwnerGUID:  request.OwnerGUID,
 	}
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
