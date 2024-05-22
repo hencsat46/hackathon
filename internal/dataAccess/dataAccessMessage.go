@@ -41,7 +41,7 @@ func (dao *DataAccess) CreateMessage(ctx context.Context, message models.Message
 		Image:      message.Image,
 	}
 
-	update := bson.D{{"$push", bson.D{{"messages", data}}}}
+	update := bson.M{"$push": bson.M{"messages": data}}
 
 	if _, err := coll.UpdateOne(context.TODO(), filter, update); err != nil {
 		slog.Debug(err.Error())
@@ -51,11 +51,12 @@ func (dao *DataAccess) CreateMessage(ctx context.Context, message models.Message
 	return nil
 }
 
-func (dao *DataAccess) UpdateMessage(ctx context.Context, newContent, messageID string) error {
+func (dao *DataAccess) UpdateMessage(ctx context.Context, newContent, messageID, chatroomId string) error {
 	coll := dao.mongoConnection.Database("ringo").Collection("messages")
 
-	filter := bson.D{{"chatroom_id", messageData.ChatroomId}, {"chatrooms.message_id", messageData.MessageId}}
-	update := bson.D{{"$set", bson.D{{"chatrooms.$.content", messageData.Content}}}}
+	filter := bson.M{"chatroom_id": chatroomId, "chatrooms.message_id": messageID}
+
+	update := bson.M{"$set": bson.M{"messages.content": newContent}}
 
 	if _, err := coll.UpdateOne(context.TODO(), filter, update); err != nil {
 		slog.Debug(err.Error())
