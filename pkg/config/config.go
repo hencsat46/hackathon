@@ -15,6 +15,7 @@ type Config struct {
 	ExpTime     int
 	Port        string
 	Addr        string
+	Mongo       string
 }
 
 func New() *Config {
@@ -35,5 +36,6 @@ func New() *Config {
 		ExpTime:     t,
 		Port:        os.Getenv("PORT"),
 		Addr:        os.Getenv("ADDR"),
+		Mongo:       os.Getenv("MONGO"),
 	}
 }

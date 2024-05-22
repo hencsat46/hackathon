@@ -48,6 +48,7 @@ func (dao *DataAccess) LoginUser(ctx context.Context, userData models.User) (*mo
 }
 
 func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*models.User, error) {
+
 	slog.Debug(fmt.Sprintf("creating user %v\n", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
@@ -56,16 +57,11 @@ func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*m
 		Username:       userData.Username,
 		HashedPassword: userData.HashedPassword,
 		Email:          userData.Email,
+		Chatrooms:      primitive.A{},
 	}
 
 	_, err := coll.InsertOne(context.TODO(), data)
-	if err != nil {
-		slog.Debug(err.Error())
-		return nil, err
-	}
 
-	user := bson.D{{"guid", userData.GUID}, {"chatrooms", primitive.A{}}}
-	_, err = dao.mongoConnection.Database("ringo").Collection("chatrooms").InsertOne(context.TODO(), user)
 	if err != nil {
 		slog.Debug(err.Error())
 		return nil, err

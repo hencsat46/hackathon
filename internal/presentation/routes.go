@@ -6,7 +6,6 @@ import (
 	"time"
 
 	e "hackathon/exceptions"
-
 	"hackathon/internal/presentation/entities"
 
 	"github.com/gofiber/contrib/websocket"
@@ -56,7 +55,7 @@ func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 
 	userRoutes.Post("/create", h.CreateUser)
 	userRoutes.Post("/login", h.Login)
-	userRoutes.Put("/updateUsername", h.jwtMiddleware.ValidateToken(h.UpdateUsername))
+	userRoutes.Put("/updateUsername", h.jwtMiddleware.ValidateToken(h.UpdateChatroom))
 	userRoutes.Put("/updateEmail", h.jwtMiddleware.ValidateToken(h.UpdateEmail))
 	userRoutes.Put("/updatePassword", h.jwtMiddleware.ValidateToken(h.UpdatePassword))
 	userRoutes.Delete("/delete", h.jwtMiddleware.ValidateToken(h.DeleteUser))
@@ -66,7 +65,7 @@ func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 
 	chatroomRoutes.Post("/create", h.jwtMiddleware.ValidateToken(h.CreateChatroom))
 	chatroomRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.UpdateChatroom))
-	chatroomRoutes.Delete("/", h.jwtMiddleware.ValidateToken(h.DeleteChatroom))
+	chatroomRoutes.Delete("/:chatroomID", h.jwtMiddleware.ValidateToken(h.DeleteChatroom))
 
 	messageRoutes.Get("/:cid", h.jwtMiddleware.ValidateToken(h.FetchMessagesForChatroom))
 	messageRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.UpdateMessage))

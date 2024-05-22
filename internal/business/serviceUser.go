@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"hackathon/models"
 	"log/slog"
+
+	"github.com/beevik/guid"
 )
 
 func (b *Business) FetchUserChatrooms(ctx context.Context, userData models.User) ([]models.Chatroom, error) {
@@ -29,6 +31,9 @@ func (b *Business) LoginUser(ctx context.Context, userData models.User) (*models
 }
 
 func (b *Business) CreateUser(ctx context.Context, userData models.User) (*models.User, error) {
+
+	userData.GUID = guid.NewString()
+
 	user, err := b.UserDataAccess.CreateUser(ctx, userData)
 	if err != nil {
 		slog.Debug(err.Error())

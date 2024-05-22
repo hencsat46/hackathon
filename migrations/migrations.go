@@ -21,17 +21,19 @@ type MongoChatroomData struct {
 }
 
 type MongoChatroom struct {
-	ChatroomId string `bson:"chatroom_id"`
-	Name       string `bson:"name"`
-	OwnerGUID  string `bson:"owner"`
-	IsPrivate  bool   `bson:"isPrivate"`
+	ChatroomId string      `bson:"chatroom_id"`
+	Name       string      `bson:"name"`
+	OwnerGUID  string      `bson:"owner"`
+	IsPrivate  bool        `bson:"isPrivate"`
+	Messages   primitive.A `bson:"messages"`
 }
 
 type MongoUser struct {
-	GUID           string `bson:"guid"`
-	Username       string `bson:"username"`
-	HashedPassword string `bson:"password"`
-	Email          string `bson:"email"`
+	GUID           string      `bson:"guid"`
+	Username       string      `bson:"username"`
+	HashedPassword string      `bson:"password"`
+	Email          string      `bson:"email"`
+	Chatrooms      primitive.A `bson:"chatrooms"`
 }
 
 type MongoMessage struct {

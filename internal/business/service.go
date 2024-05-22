@@ -12,6 +12,7 @@ type Business struct {
 }
 
 type IDataAccessChatroom interface {
+	GetChatrooms(ctx context.Context) ([]models.Chatroom, error)
 	CreateChatroom(ctx context.Context, chatroomData models.Chatroom) error
 	UpdateChatroom(ctx context.Context, chatroomData models.Chatroom) error
 	DeleteChatroom(ctx context.Context, chatroomData models.Chatroom) error
@@ -40,4 +41,11 @@ func NewService(chatroomDataAccess IDataAccessChatroom, userDataAccess IDataAcce
 		UserDataAccess:     userDataAccess,
 		MessageDataAccess:  messageDataAccess,
 	}
+}
+
+func (b *Business) GetUser(ctx context.Context, userData models.User) (*models.User, error) {
+	panic("not implemented")
+}
+func (b *Business) GetChatroom(ctx context.Context, chatroomData models.Chatroom) (*models.Chatroom, error) {
+	panic("not implemented")
 }

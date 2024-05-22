@@ -5,15 +5,20 @@ import (
 	"fmt"
 	"hackathon/models"
 	"log/slog"
+
+	"github.com/google/uuid"
 )
 
-func (b *Business) CreateChatroom(ctx context.Context, chatroomData models.Chatroom) error {
+func (b *Business) CreateChatroom(ctx context.Context, chatroomData models.Chatroom) (*models.Chatroom, error) {
 	slog.Debug(fmt.Sprintf("creating chatroom: %v\n", chatroomData))
+
+	chatroomData.ChatroomId = uuid.NewString()
+
 	if err := b.ChatroomDataAccess.CreateChatroom(ctx, chatroomData); err != nil {
 		slog.Debug(err.Error())
-		return err
+		return nil, err
 	}
-	return nil
+	return &models.Chatroom{ChatroomId: chatroomData.ChatroomId}, nil
 }
 
 func (b *Business) UpdateChatroom(ctx context.Context, chatroomData models.Chatroom) error {
@@ -33,4 +38,15 @@ func (b *Business) DeleteChatroom(ctx context.Context, chatroomData models.Chatr
 	}
 
 	return nil
+}
+
+func (b *Business) GetChatrooms(ctx context.Context) ([]models.Chatroom, error) {
+	slog.Debug("getting chatrooms")
+	chatrooms, err := b.ChatroomDataAccess.GetChatrooms(ctx)
+	if err != nil {
+		slog.Debug(err.Error())
+		return nil, err
+	}
+
+	return chatrooms, nil
 }

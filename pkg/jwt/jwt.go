@@ -1,8 +1,8 @@
 package jwt
 
 import (
+	e "hackathon/exceptions"
 	"hackathon/pkg/config"
-	e "hackathon/pkg/exceptions"
 	"log/slog"
 	"net/http"
 	"time"
@@ -25,7 +25,7 @@ type JWT struct {
 func New(cfg *config.Config) *JWT {
 	return &JWT{
 		secret:  cfg.JWTsecret,
-		expTime: time.Duration(cfg.ExpTime),
+		expTime: time.Duration(cfg.ExpTime) * time.Second,
 	}
 }
 
@@ -54,7 +54,6 @@ func (j *JWT) ValidateToken(next fiber.Handler) fiber.Handler {
 			})
 		}
 		tokenString := authHeader[len("Bearer "):]
-
 		token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
 			_, ok := t.Method.(*jwt.SigningMethodHMAC)
 			if !ok {
