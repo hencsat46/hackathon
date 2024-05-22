@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"context"
-	"hackathon/models"
-	"hackathon/pkg/exceptions"
 	"net/http"
 	"time"
+
+	e "hackathon/exceptions"
+
+	"hackathon/internal/presentation/entities"
 
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
@@ -13,22 +15,14 @@ import (
 
 func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 	h.app.Use("/ws", func(c *fiber.Ctx) error {
-		userGUID := c.Params("GUID")
-		chatroomId := c.Params("chatroomID")
+		GUID := c.Params("GUID")
+		chatroomID := c.Params("chatroomID")
 
-		if len(userGUID) == 0 || len(chatroomId) == 0 {
-			return c.Status(http.StatusBadRequest).JSON(Response{
-				Error:   exceptions.ErrBadRequest.Error(),
+		if len(GUID) == 0 || len(chatroomID) == 0 {
+			return c.Status(http.StatusBadRequest).JSON(entities.Response{
+				Error:   e.ErrBadRequest.Error(),
 				Content: nil,
 			})
-		}
-
-		userData := models.User{
-			GUID: userGUID,
-		}
-
-		chatroomData := models.Chatroom{
-			ChatroomId: chatroomId,
 		}
 
 		ctxUser, cancel := context.WithTimeout(context.TODO(), time.Second*5)
@@ -37,16 +31,16 @@ func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 		ctxChatroom, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 		defer cancel()
 
-		if _, err := h.WsBusiness.GetChatroom(ctxChatroom, chatroomData); err != nil {
-			return c.Status(http.StatusNotFound).JSON(Response{
-				Error:   exceptions.ErrNotFound.Error(),
+		if _, err := h.WsBusiness.GetChatroom(ctxChatroom, chatroomID); err != nil {
+			return c.Status(http.StatusNotFound).JSON(entities.Response{
+				Error:   e.ErrNotFound.Error(),
 				Content: nil,
 			})
 		}
 
-		if _, err := h.WsBusiness.GetUser(ctxUser, userData); err != nil {
-			return c.Status(http.StatusNotFound).JSON(Response{
-				Error:   exceptions.ErrNotFound.Error(),
+		if _, err := h.WsBusiness.GetUser(ctxUser, GUID); err != nil {
+			return c.Status(http.StatusNotFound).JSON(entities.Response{
+				Error:   e.ErrNotFound.Error(),
 				Content: nil,
 			})
 		}
@@ -60,21 +54,21 @@ func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 	messageRoutes := h.app.Group("/message")
 	wsRoutes := h.app.Group("/ws")
 
-	userRoutes.Post("/create", h.createUser)
-	userRoutes.Post("login", h.loginUser)
-	userRoutes.Put("/updateUsername", h.jwtMiddleware.ValidateToken(h.updateUsername))
-	userRoutes.Put("/updateEmail", h.jwtMiddleware.ValidateToken(h.updateEmail))
-	userRoutes.Put("/updatePassword", h.jwtMiddleware.ValidateToken(h.updatePassword))
-	userRoutes.Delete("/delete", h.jwtMiddleware.ValidateToken(h.deleteUser))
-	userRoutes.Get("/userChatrooms/:guid", h.jwtMiddleware.ValidateToken(h.fetchUserChatrooms))
+	userRoutes.Post("/create", h.CreateUser)
+	userRoutes.Post("/login", h.Login)
+	userRoutes.Put("/updateUsername", h.jwtMiddleware.ValidateToken(h.UpdateUsername))
+	userRoutes.Put("/updateEmail", h.jwtMiddleware.ValidateToken(h.UpdateEmail))
+	userRoutes.Put("/updatePassword", h.jwtMiddleware.ValidateToken(h.UpdatePassword))
+	userRoutes.Delete("/delete", h.jwtMiddleware.ValidateToken(h.DeleteUser))
+	userRoutes.Get("/userChatrooms/:guid", h.jwtMiddleware.ValidateToken(h.FetchUserChatrooms))
 
-	wsRoutes.Get("/:GUID/:cid", h.jwtMiddleware.ValidateToken(websocket.New(h.handleWS)))
+	wsRoutes.Get("/:GUID/:cid", h.jwtMiddleware.ValidateToken(websocket.New(h.HandleWS)))
 
-	chatroomRoutes.Post("/create", h.jwtMiddleware.ValidateToken(h.createChatroom))
-	chatroomRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.updateChatroom))
-	chatroomRoutes.Delete("/", h.jwtMiddleware.ValidateToken(h.deleteChatroom))
+	chatroomRoutes.Post("/create", h.jwtMiddleware.ValidateToken(h.CreateChatroom))
+	chatroomRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.UpdateChatroom))
+	chatroomRoutes.Delete("/", h.jwtMiddleware.ValidateToken(h.DeleteChatroom))
 
-	messageRoutes.Get("/:cid", h.jwtMiddleware.ValidateToken(h.fetchMessagesForChatroom))
-	messageRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.updateMessage))
+	messageRoutes.Get("/:cid", h.jwtMiddleware.ValidateToken(h.FetchMessagesForChatroom))
+	messageRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.UpdateMessage))
 	messageRoutes.Delete("/", h.jwtMiddleware.ValidateToken(h.DeleteMessage))
 }
