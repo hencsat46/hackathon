@@ -6,6 +6,7 @@ import (
 	dataaccess "hackathon/internal/dataAccess"
 	handlers "hackathon/internal/presentation"
 	"hackathon/pkg/config"
+	"hackathon/pkg/logger"
 	"log/slog"
 	"os"
 
@@ -16,6 +17,8 @@ import (
 
 func main() {
 	cfg := config.New()
+	logger := logger.New(cfg)
+	logger.SetAsDefault()
 	mng, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(cfg.Mongo))
 	if err != nil {
 		slog.Error(err.Error())

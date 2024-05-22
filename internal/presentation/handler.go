@@ -35,7 +35,7 @@ type IBusinessMessage interface {
 }
 
 type IBusinessChatroom interface {
-	CreateChatroom(ctx context.Context, chatroomData models.Chatroom) error
+	CreateChatroom(ctx context.Context, chatroomData models.Chatroom) (*models.Chatroom, error)
 	UpdateChatroom(ctx context.Context, chatroomData models.Chatroom) error
 	DeleteChatroom(ctx context.Context, chatroomData models.Chatroom) error
 }
@@ -57,6 +57,8 @@ func NewHandler(cfg *config.Config, app *fiber.App, userCh IBusinessUser, msgCh 
 		MessageBusiness:  msgCh,
 		ChatroomBusiness: chatroomCh,
 		WsBusiness:       ws,
+		hub:              make(map[string]*models.Room),
+		jwtMiddleware:    jwt.New(cfg),
 		addr:             cfg.Addr,
 		port:             cfg.Port,
 	}

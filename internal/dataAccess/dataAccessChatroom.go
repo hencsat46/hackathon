@@ -25,7 +25,7 @@ func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroomData models.C
 
 	filter := bson.D{{"guid", chatroomData.OwnerGUID}}
 
-	update := bson.D{{"$add", bson.D{{"chatrooms", mongoChatroom}}}}
+	update := bson.D{{"$push", bson.D{{"chatrooms", mongoChatroom}}}}
 
 	_, err := coll.UpdateOne(context.TODO(), filter, update)
 	if err != nil {

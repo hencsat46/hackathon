@@ -17,10 +17,12 @@ type User struct {
 }
 
 type Message struct {
-	ID         string `json:"id"`
-	SenderGUID string `json:"sender_GUID"`
-	Content    string `json:"message_content"`
-	Image      bool   `json:"image_sent"`
+	MessageId  string `bson:"message_id" json:"message_id"`
+	ChatroomId string `bson:"chatroom_id" json:"chatroom_id"`
+	SenderGUID string `bson:"sender_guid" json:"sender_guid"`
+	SenderName string `bson:"sender_name" json:"sender_name"`
+	Content    string `bson:"content" json:"content"`
+	Image      bool   `bson:"image" json:"image"`
 }
 
 type Response struct {

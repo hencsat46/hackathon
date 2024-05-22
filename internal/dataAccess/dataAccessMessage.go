@@ -38,7 +38,7 @@ func (dao *DataAccess) CreateMessage(ctx context.Context, messageData models.Mes
 		Image:      messageData.Image,
 	}
 
-	update := bson.D{{"$addToSet", bson.D{{"chatroom_data", data}}}}
+	update := bson.D{{"$push", bson.D{{"chatroom_data", data}}}}
 
 	if _, err := coll.UpdateOne(context.TODO(), filter, update); err != nil {
 		slog.Debug(err.Error())

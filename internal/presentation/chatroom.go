@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -26,16 +27,16 @@ func (h *HTTPhandler) createChatroom(c *fiber.Ctx) error {
 	slog.Debug(fmt.Sprintf("create chatroom endpoint called: %v\n", request))
 
 	chatroomData := models.Chatroom{
-		ChatroomId: request.ID,
-		Name:       request.Name,
-		OwnerGUID:  request.OwnerGUID,
-		IsPrivate:  request.IsPrivate,
+		Name:      request.Name,
+		OwnerGUID: request.OwnerGUID,
+		IsPrivate: request.IsPrivate,
 	}
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
 
-	if err := h.ChatroomBusiness.CreateChatroom(ctx, chatroomData); err != nil {
+	returnData, err := h.ChatroomBusiness.CreateChatroom(ctx, chatroomData)
+	if err != nil {
 		slog.Debug(err.Error())
 		return c.Status(http.StatusInternalServerError).JSON(Response{
 			Error:   exceptions.ErrInternalServerError.Error(),
@@ -43,9 +44,18 @@ func (h *HTTPhandler) createChatroom(c *fiber.Ctx) error {
 		})
 	}
 
+	if _, ok := h.hub[returnData.ChatroomId]; !ok {
+		h.hub[returnData.ChatroomId] = &models.Room{
+			CID:          returnData.ChatroomId,
+			Participants: make(map[string]*websocket.Conn),
+		}
+	}
+
+	slog.Debug(fmt.Sprintf("%v", h.hub))
+
 	return c.Status(http.StatusOK).JSON(Response{
 		Error:   "nil",
-		Content: "Chatroom created",
+		Content: returnData.ChatroomId,
 	})
 }
 

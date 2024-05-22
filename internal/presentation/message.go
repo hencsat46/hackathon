@@ -57,7 +57,7 @@ func (h *HTTPhandler) updateMessage(c *fiber.Ctx) error {
 	slog.Debug(fmt.Sprintf("update message endpoint called: %v\n", request))
 
 	messageData := models.Message{
-		MessageId: request.ID,
+		MessageId: request.MessageId,
 		Content:   request.Content,
 	}
 
@@ -97,7 +97,7 @@ func (h *HTTPhandler) DeleteMessage(c *fiber.Ctx) error {
 	slog.Debug(fmt.Sprintf("delete message endpoint called: %v\n", request))
 
 	messageData := models.Message{
-		MessageId: request.ID,
+		MessageId: request.MessageId,
 	}
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)

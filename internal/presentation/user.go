@@ -78,7 +78,9 @@ func (h *HTTPhandler) loginUser(c *fiber.Ctx) error {
 	defer cancel()
 
 	userData, err := h.UserBusiness.LoginUser(ctx, userEntity)
-	slog.Debug(err.Error())
+	if err != nil {
+		slog.Debug(err.Error())
+	}
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(Response{
 			Error:   exceptions.ErrInternalServerError.Error(),
