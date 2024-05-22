@@ -11,12 +11,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (dao *DataAccess) FetchUserChatrooms(ctx context.Context, userData models.User) ([]models.Chatroom, error) {
+func (dao *DataAccess) FetchUserChatrooms(ctx context.Context, GUID string) ([]models.Chatroom, error) {
 	var chatrooms []models.Chatroom
 
 	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 
-	filter := bson.D{{"guid", userData.GUID}}
+	filter := bson.D{{"guid", GUID}}
 
 	if err := coll.FindOne(context.TODO(), filter).Decode(&chatrooms); err != nil {
 		slog.Debug(err.Error())
@@ -26,8 +26,8 @@ func (dao *DataAccess) FetchUserChatrooms(ctx context.Context, userData models.U
 	return chatrooms, nil
 }
 
-func (dao *DataAccess) LoginUser(ctx context.Context, userData models.User) (*models.User, error) {
-	slog.Debug(fmt.Sprintf("login user %v\n", userData))
+func (dao *DataAccess) Login(ctx context.Context, userData models.User) (string, error) {
+	slog.Debug(fmt.Sprintf("login user %v", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
 	filter := bson.D{{"username", userData.Username}, {"password", userData.HashedPassword}}
@@ -37,17 +37,13 @@ func (dao *DataAccess) LoginUser(ctx context.Context, userData models.User) (*mo
 	err := coll.FindOne(context.TODO(), filter).Decode(&mongoData)
 	if err != nil {
 		slog.Debug(err.Error())
-		return nil, err
+		return "", err
 	}
 
-	returnValue := &models.User{
-		GUID: mongoData.GUID,
-	}
-
-	return returnValue, nil
+	return mongoData.GUID, nil
 }
 
-func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*models.User, error) {
+func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) error {
 
 	slog.Debug(fmt.Sprintf("creating user %v\n", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
@@ -64,19 +60,19 @@ func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*m
 
 	if err != nil {
 		slog.Debug(err.Error())
-		return nil, err
+		return err
 	}
 
-	return &userData, nil
+	return nil
 }
 
-func (dao *DataAccess) UpdateUsername(ctx context.Context, userData models.User) error {
-	slog.Debug(fmt.Sprintf("updating username %v\n", userData))
+func (dao *DataAccess) UpdateUsername(ctx context.Context, newUsername, GUID string) error {
+	slog.Debug(fmt.Sprintf("updating username %v", GUID))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
-	filter := bson.D{{"guid", userData.GUID}}
+	filter := bson.D{{"guid", GUID}}
 
-	update := bson.D{{"$set", bson.D{{"username", userData.Username}}}}
+	update := bson.D{{"$set", bson.D{{"username", newUsername}}}}
 
 	_, err := coll.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
@@ -86,13 +82,13 @@ func (dao *DataAccess) UpdateUsername(ctx context.Context, userData models.User)
 	return nil
 }
 
-func (dao *DataAccess) UpdateEmail(ctx context.Context, userData models.User) error {
-	slog.Debug(fmt.Sprintf("updating email %v\n", userData))
+func (dao *DataAccess) UpdateEmail(ctx context.Context, GUID, newEmail string) error {
+	slog.Debug(fmt.Sprintf("updating email %v", GUID))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
-	filter := bson.D{{"guid", userData.GUID}}
+	filter := bson.D{{"guid", GUID}}
 
-	update := bson.D{{"$set", bson.D{{"email", userData.Email}}}}
+	update := bson.D{{"$set", bson.D{{"email", newEmail}}}}
 
 	_, err := coll.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
@@ -102,13 +98,13 @@ func (dao *DataAccess) UpdateEmail(ctx context.Context, userData models.User) er
 	return nil
 }
 
-func (dao *DataAccess) UpdatePassword(ctx context.Context, userData models.User) error {
-	slog.Debug(fmt.Sprintf("updating password %v\n", userData))
+func (dao *DataAccess) UpdatePassword(ctx context.Context, GUID, newPassword string) error {
+	slog.Debug(fmt.Sprintf("updating password %v", GUID))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
-	filter := bson.D{{"guid", userData.GUID}}
+	filter := bson.D{{"guid", GUID}}
 
-	update := bson.D{{"$set", bson.D{{"password", userData.HashedPassword}}}}
+	update := bson.D{{"$set", bson.D{{"password", newPassword}}}}
 
 	_, err := coll.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
@@ -118,11 +114,11 @@ func (dao *DataAccess) UpdatePassword(ctx context.Context, userData models.User)
 	return nil
 }
 
-func (dao *DataAccess) DeleteUser(ctx context.Context, userData models.User) error {
-	slog.Debug(fmt.Sprintf("deleting user %v\n", userData))
+func (dao *DataAccess) DeleteUser(ctx context.Context, GUID string) error {
+	slog.Debug(fmt.Sprintf("deleting user %v", GUID))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
-	filter := bson.D{{"guid", userData.GUID}}
+	filter := bson.D{{"guid", GUID}}
 
 	_, err := coll.DeleteOne(context.TODO(), filter)
 	if err != nil {

@@ -19,7 +19,7 @@ type IDataAccessUser interface {
 	CreateUser(ctx context.Context, user models.User) error
 	UpdateUsername(ctx context.Context, username, GUID string) error
 	UpdateEmail(ctx context.Context, email, GUID string) error
-	UpdatePassword(ctx context.Context, oldPassword, newPassword, GUID string) error
+	UpdatePassword(ctx context.Context, newPassword, GUID string) error
 	DeleteUser(ctx context.Context, GUID string) error
 }
 
@@ -79,8 +79,9 @@ func (b *UserService) UpdateEmail(ctx context.Context, email, GUID string) error
 	return nil
 }
 
+// TODO: logic with comparison of provided old password with real old password
 func (b *UserService) UpdatePassword(ctx context.Context, oldPassword, newPassword, GUID string) error {
-	if err := b.UserDao.UpdatePassword(ctx, oldPassword, newPassword, GUID); err != nil {
+	if err := b.UserDao.UpdatePassword(ctx, newPassword, GUID); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}

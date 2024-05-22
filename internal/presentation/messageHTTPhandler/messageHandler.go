@@ -22,8 +22,8 @@ type MessageHandler struct {
 type IBusinessMessage interface {
 	FetchMessagesForChatroom(ctx context.Context, chatroomID string) ([]models.Message, error)
 	CreateMessage(ctx context.Context, message models.Message) error
-	UpdateMessage(ctx context.Context, newContent, messageID string) error
-	DeleteMessage(ctx context.Context, messageID string) error
+	UpdateMessage(ctx context.Context, newContent, messageID, chatroomID string) error
+	DeleteMessage(ctx context.Context, message models.Message) error
 }
 
 func New(messageBusiness IBusinessMessage) *MessageHandler {
@@ -74,7 +74,7 @@ func (h *MessageHandler) UpdateMessage(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
 
-	if err := h.MessageBusiness.UpdateMessage(ctx, request.Content, request.MessageId); err != nil {
+	if err := h.MessageBusiness.UpdateMessage(ctx, request.Content, request.MessageId, request.MessageId); err != nil {
 		slog.Debug(err.Error())
 		if errors.Is(err, e.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(entities.Response{
@@ -96,13 +96,20 @@ func (h *MessageHandler) UpdateMessage(c *fiber.Ctx) error {
 }
 
 func (h *MessageHandler) DeleteMessage(c *fiber.Ctx) error {
-	messageID := c.Params("messageID")
-	slog.Debug(fmt.Sprintf("delete message endpoint called: %v", messageID))
+	var request models.Message
+
+	if err := c.BodyParser(&request); err != nil {
+		c.Status(http.StatusBadRequest).JSON(entities.Response{
+			Error:   e.ErrBadRequest.Error(),
+			Content: nil,
+		})
+	}
+	slog.Debug(fmt.Sprintf("delete message endpoint called: %v", request))
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
 
-	if err := h.MessageBusiness.DeleteMessage(ctx, messageID); err != nil {
+	if err := h.MessageBusiness.DeleteMessage(ctx, request); err != nil {
 		slog.Debug(err.Error())
 		if errors.Is(err, e.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(entities.Response{
