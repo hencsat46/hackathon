@@ -2,6 +2,7 @@ package hubmanager
 
 import (
 	"context"
+	"log"
 	"log/slog"
 	"sync"
 	"time"
@@ -32,6 +33,7 @@ func New(loader ILoader) *HubManager {
 func (h *HubManager) LoadChatroomToHub(room *entities.WSRoom) {
 	h.Lock()
 	defer h.Unlock()
+	room.Participants = make(map[string]*websocket.Conn)
 	h.hub[room.CID] = room
 }
 
@@ -40,26 +42,28 @@ func (h *HubManager) LoadAllChatroomsToHub() {
 	defer h.Unlock()
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
-
 	rooms, err := h.loader.GetChatrooms(ctx)
 	if err != nil {
 		slog.Debug(err.Error())
 	}
 	rms := make([]entities.WSRoom, 0, len(rooms))
-
+	
 	for _, r := range rooms {
 		rms = append(rms, entities.WSRoom{CID: r.ChatroomId, Participants: make(map[string]*websocket.Conn)})
 	}
-
+	log.Println("rms", rms)
 	for _, r := range rms {
 		h.hub[r.CID] = &r
 	}
+	log.Println(h.hub["ca7bbc89-b569-44c1-b00e-c3528acfad1a"])
 }
 
 func (h *HubManager) AddParticipant(c *websocket.Conn, cid, guid string) {
 	h.Lock()
 	defer h.Unlock()
+	log.Println("add participant: ", h.hub["ca7bbc89-b569-44c1-b00e-c3528acfad1a"])
 	h.hub[cid].Participants[guid] = c
+	log.Println("after adding")
 }
 
 func (h *HubManager) DeleteParticipant(c *websocket.Conn, cid, guid string) {

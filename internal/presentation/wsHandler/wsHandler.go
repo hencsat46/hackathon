@@ -2,6 +2,7 @@ package wsHandler
 
 import (
 	"context"
+	"log"
 	"log/slog"
 	"time"
 
@@ -51,7 +52,8 @@ func (h *WSHandler) HandleWS(c *websocket.Conn) {
 		return
 	}
 
-	h.hubManager.AddParticipant(c, guid, cid)
+	log.Println(chatroom)
+	h.hubManager.AddParticipant(c, cid, guid)
 	h.listenUserMessage(c, cid, guid)
 }
 

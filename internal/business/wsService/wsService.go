@@ -2,6 +2,7 @@ package wsservice
 
 import (
 	"context"
+	"fmt"
 	"hackathon/models"
 	"log/slog"
 )
@@ -33,10 +34,12 @@ func (w *WSService) GetUser(ctx context.Context, GUID string) (*models.User, err
 
 func (w *WSService) GetChatroom(ctx context.Context, chatroomID string) (*models.Chatroom, error) {
 	chatroom, err := w.wsDao.GetChatroom(ctx, chatroomID)
+	slog.Debug(fmt.Sprintf("%v", chatroom))
 	if err != nil {
 		slog.Debug(err.Error())
 		return nil, err
 	}
+
 
 	return chatroom, nil
 }

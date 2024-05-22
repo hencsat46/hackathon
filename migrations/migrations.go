@@ -44,3 +44,5 @@ type MongoMessage struct {
 	Content    string `bson:"content"`
 	Image      bool   `bson:"image"`
 }
+
+

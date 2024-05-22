@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
@@ -13,10 +14,11 @@ import (
 )
 
 func (h *HTTPhandler) bindRoutesAndMiddlewares() {
-	h.app.Use("/ws", func(c *fiber.Ctx) error {
+	h.app.Use("/ws/:GUID/:chatroomID", func(c *fiber.Ctx) error {
 		GUID := c.Params("GUID")
 		chatroomID := c.Params("chatroomID")
 
+		log.Println("hui")
 		if len(GUID) == 0 || len(chatroomID) == 0 {
 			return c.Status(http.StatusBadRequest).JSON(entities.Response{
 				Error:   e.ErrBadRequest.Error(),

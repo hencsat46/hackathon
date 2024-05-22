@@ -33,7 +33,7 @@ func New(messageBusiness IBusinessMessage) *MessageHandler {
 }
 
 func (h *MessageHandler) FetchMessagesForChatroom(c *fiber.Ctx) error {
-	chatroomId := c.Params("chatroomID")
+	chatroomId := c.Params("cid")
 	slog.Debug(fmt.Sprintf("fetch chatroom messages endpoint called: %v", chatroomId))
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)

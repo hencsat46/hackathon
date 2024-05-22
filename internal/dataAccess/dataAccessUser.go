@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hackathon/migrations"
 	"hackathon/models"
+	"log"
 	"log/slog"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,7 +16,7 @@ func (dao *DataAccess) FetchUserChatrooms(ctx context.Context, GUID string) ([]m
 	var chatrooms []models.Chatroom
 
 	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
-
+	log.Println(GUID)
 	filter := bson.D{{"guid", GUID}}
 
 	if err := coll.FindOne(context.TODO(), filter).Decode(&chatrooms); err != nil {

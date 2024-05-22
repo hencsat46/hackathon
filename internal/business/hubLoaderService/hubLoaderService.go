@@ -3,6 +3,7 @@ package hubloaderservice
 import (
 	"context"
 	"hackathon/models"
+	"log"
 	"log/slog"
 )
 
@@ -26,6 +27,8 @@ func (h *HubLoader) GetChatrooms(ctx context.Context) ([]models.Chatroom, error)
 		slog.Debug(err.Error())
 		return nil, err
 	}
+
+	log.Println(rooms)
 
 	return rooms, nil
 }
