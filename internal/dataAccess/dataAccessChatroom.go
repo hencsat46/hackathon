@@ -87,7 +87,7 @@ func (dao *DataAccess) GetChatrooms(ctx context.Context) ([]models.Chatroom, err
 		return nil, err
 	}
 
-	for cursor.Next() {
+	for cursor.Next(ctx) {
 		var chat models.Chatroom
 		if err := cursor.Decode(&chat); err != nil {
 			slog.Debug(err.Error())
