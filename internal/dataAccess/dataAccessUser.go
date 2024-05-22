@@ -17,11 +17,22 @@ func (dao *DataAccess) FetchUserChatrooms(ctx context.Context, GUID string) ([]m
 
 	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 	log.Println(GUID)
-	filter := bson.D{{"guid", GUID}}
+	filter := bson.D{{"owner", GUID}}
 
-	if err := coll.FindOne(context.TODO(), filter).Decode(&chatrooms); err != nil {
+	cursor, err := coll.Find(context.TODO(), filter)
+	if err != nil {
 		slog.Debug(err.Error())
 		return nil, err
+	}
+	
+	for cursor.Next(ctx) {
+		result := models.Chatroom{}
+		if err = cursor.Decode(&result); err != nil {
+			slog.Debug(err.Error())
+			return nil, err
+		}
+		chatrooms = append(chatrooms, result)
+		
 	}
 
 	return chatrooms, nil
