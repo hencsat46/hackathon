@@ -29,9 +29,10 @@ type IBusinessChatroom interface {
 	DeleteChatroom(ctx context.Context, ownerGUID, chatroomID string) error
 }
 
-func New(hubmngr *hubmanager.HubManager) *ChatroomHandler {
+func New(hubmngr *hubmanager.HubManager, chatroomBusiness IBusinessChatroom) *ChatroomHandler {
 	return &ChatroomHandler{
-		HubManager: hubmngr,
+		HubManager:       hubmngr,
+		ChatroomBusiness: chatroomBusiness,
 	}
 }
 

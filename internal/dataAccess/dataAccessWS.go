@@ -21,9 +21,8 @@ func (dao *DataAccess) GetUser(ctx context.Context, GUID string) (*models.User, 
 	}
 
 	return result, nil
-
-
 }
+
 func (dao *DataAccess) GetChatroom(ctx context.Context, chatroomID string) (*models.Chatroom, error) {
 	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 

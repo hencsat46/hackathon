@@ -36,6 +36,21 @@ func (h *WSHandler) HandleWS(c *websocket.Conn) {
 	guid := c.Params("GUID")
 	cid := c.Params("cid")
 
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
+	defer cancel()
+
+	user, err := h.WsBusiness.GetUser(ctx, guid)
+	if err != nil || user == nil {
+		slog.Debug(err.Error() + " or no such user exists")
+		return
+	}
+
+	chatroom, err := h.WsBusiness.GetChatroom(ctx, cid)
+	if err != nil || chatroom == nil {
+		slog.Debug(err.Error() + " or no such chatroom exists")
+		return
+	}
+
 	h.hubManager.AddParticipant(c, guid, cid)
 	h.listenUserMessage(c, cid, guid)
 }
@@ -53,7 +68,7 @@ func (h *WSHandler) listenUserMessage(c *websocket.Conn, cid, guid string) {
 		message := models.Message{
 			MessageId:  msg.MessageID,
 			ChatroomId: msg.ChatroomID,
-			SenderGUID:       msg.GUID,
+			SenderGUID: msg.GUID,
 			Content:    msg.Content,
 			Image:      msg.Image,
 		}
