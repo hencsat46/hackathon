@@ -75,3 +75,27 @@ func (dao *DataAccess) DeleteChatroom(ctx context.Context, chatroomData models.C
 	}
 	return nil
 }
+
+func (dao *DataAccess) GetChatrooms(ctx context.Context) ([]models.Chatroom, error) {
+	slog.Debug("getting chatrooms")
+	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
+	var chats []models.Chatroom
+
+	cursor, err := coll.Find(ctx, bson.D{})
+	if err != nil {
+		slog.Debug(err.Error())
+		return nil, err
+	}
+
+	for cursor.Next() {
+		var chat models.Chatroom
+		if err := cursor.Decode(&chat); err != nil {
+			slog.Debug(err.Error())
+			return nil, err
+		}
+
+		chats = append(chats, chat)
+	}
+
+	return chats, nil
+}

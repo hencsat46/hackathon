@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"context"
+	"log/slog"
 
 	"hackathon/models"
 	"hackathon/pkg/config"
 	"hackathon/pkg/jwt"
 
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -35,6 +37,7 @@ type IBusinessMessage interface {
 }
 
 type IBusinessChatroom interface {
+	GetChatrooms(ctx context.Context) ([]models.Chatroom, error)
 	CreateChatroom(ctx context.Context, chatroomData models.Chatroom) (*models.Chatroom, error)
 	UpdateChatroom(ctx context.Context, chatroomData models.Chatroom) error
 	DeleteChatroom(ctx context.Context, chatroomData models.Chatroom) error
@@ -65,6 +68,20 @@ func NewHandler(cfg *config.Config, app *fiber.App, userCh IBusinessUser, msgCh 
 }
 
 func (h *HTTPhandler) Start() error {
+	rooms, err := h.ChatroomBusiness.GetChatrooms(context.TODO())
+	if err != nil {
+		slog.Debug(err.Error())
+	}
+	rms := make([]models.Room, 0, len(rooms))
+
+	for _, r := range rooms {
+		rms = append(rms, models.Room{CID: r.ChatroomId, Participants: make(map[string]*websocket.Conn)})
+	}
+
+	for _, r := range rms {
+		h.hub[r.CID] = &r
+	}
+
 	h.bindRoutesAndMiddlewares()
 	return h.app.Listen(h.addr + ":" + h.port)
 }

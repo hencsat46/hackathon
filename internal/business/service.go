@@ -12,6 +12,7 @@ type Business struct {
 }
 
 type IDataAccessChatroom interface {
+	GetChatrooms(ctx context.Context) ([]models.Chatroom, error)
 	CreateChatroom(ctx context.Context, chatroomData models.Chatroom) error
 	UpdateChatroom(ctx context.Context, chatroomData models.Chatroom) error
 	DeleteChatroom(ctx context.Context, chatroomData models.Chatroom) error

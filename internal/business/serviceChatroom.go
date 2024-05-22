@@ -39,3 +39,14 @@ func (b *Business) DeleteChatroom(ctx context.Context, chatroomData models.Chatr
 
 	return nil
 }
+
+func (b *Business) GetChatrooms(ctx context.Context) ([]models.Chatroom, error) {
+	slog.Debug("getting chatrooms")
+	chatrooms, err := b.ChatroomDataAccess.GetChatrooms(ctx)
+	if err != nil {
+		slog.Debug(err.Error())
+		return nil, err
+	}
+
+	return chatrooms, nil
+}
