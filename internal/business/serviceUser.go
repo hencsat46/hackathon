@@ -18,6 +18,16 @@ func (b *Business) FetchUserChatrooms(ctx context.Context, userData models.User)
 	return chatrooms, nil
 }
 
+func (b *Business) LoginUser(ctx context.Context, userData models.User) (*models.User, error) {
+	user, err := b.UserDataAccess.LoginUser(ctx, userData)
+	if err != nil {
+		slog.Debug(err.Error())
+		return nil, err
+	}
+
+	return user, nil
+}
+
 func (b *Business) CreateUser(ctx context.Context, userData models.User) (*models.User, error) {
 	user, err := b.UserDataAccess.CreateUser(ctx, userData)
 	if err != nil {

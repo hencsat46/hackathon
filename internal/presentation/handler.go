@@ -42,6 +42,7 @@ type IBusinessChatroom interface {
 
 type IBusinessUser interface {
 	FetchUserChatrooms(ctx context.Context, userData models.User) ([]models.Chatroom, error)
+	LoginUser(ctx context.Context, userData models.User) (*models.User, error)
 	CreateUser(ctx context.Context, userData models.User) (*models.User, error)
 	UpdateUsername(ctx context.Context, userData models.User) error
 	UpdateEmail(ctx context.Context, userData models.User) error

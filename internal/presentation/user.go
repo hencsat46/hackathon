@@ -19,7 +19,7 @@ func (h *HTTPhandler) createUser(c *fiber.Ctx) error {
 	userDTO := new(User)
 
 	if err := c.BodyParser(userDTO); err != nil {
-		log.Println(err)
+		slog.Debug(err.Error())
 		return c.Status(http.StatusBadRequest).JSON(Response{
 			Error:   exceptions.ErrBadRequest.Error(),
 			Content: nil,
@@ -49,6 +49,51 @@ func (h *HTTPhandler) createUser(c *fiber.Ctx) error {
 		Error: "nil",
 		Content: User{
 			GUID: challenData.GUID,
+		},
+	})
+}
+
+func (h *HTTPhandler) loginUser(c *fiber.Ctx) error {
+	userDTO := new(User)
+
+	if err := c.BodyParser(userDTO); err != nil {
+		slog.Debug(err.Error())
+		return c.Status(http.StatusBadRequest).JSON(Response{
+			Error:   exceptions.ErrBadRequest.Error(),
+			Content: nil,
+		})
+	}
+
+	slog.Debug(fmt.Sprintf("login user endpoint called: %v\n", userDTO))
+
+	userEntity := models.User{
+		Username:       userDTO.Username,
+		HashedPassword: userDTO.Password,
+		Email:          userDTO.Email,
+	}
+
+	ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
+	defer cancel()
+
+	userData, err := h.UserBusiness.LoginUser(ctx, userEntity)
+	slog.Debug(err.Error())
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(Response{
+			Error:   exceptions.ErrInternalServerError.Error(),
+			Content: nil,
+		})
+	}
+
+	token := h.jwtMiddleware.CreateToken(userDTO.GUID)
+
+	return c.Status(http.StatusOK).JSON(Response{
+		Error: "nil",
+		Content: struct {
+			GUID  string
+			Token string
+		}{
+			GUID:  userData.GUID,
+			Token: token,
 		},
 	})
 }
