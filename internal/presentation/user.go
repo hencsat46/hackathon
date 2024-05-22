@@ -36,8 +36,10 @@ func (h *HTTPhandler) createUser(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
 	defer cancel()
 
-	challenData, err := h.UserBusiness.CreateUser(ctx, userEntity)
-	slog.Debug(err.Error())
+	userData, err := h.UserBusiness.CreateUser(ctx, userEntity)
+	if err != nil {
+		slog.Debug(err.Error())
+	}
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(Response{
 			Error:   exceptions.ErrInternalServerError.Error(),
@@ -48,7 +50,7 @@ func (h *HTTPhandler) createUser(c *fiber.Ctx) error {
 	return c.Status(http.StatusCreated).JSON(Response{
 		Error: "nil",
 		Content: User{
-			GUID: challenData.GUID,
+			GUID: userData.GUID,
 		},
 	})
 }

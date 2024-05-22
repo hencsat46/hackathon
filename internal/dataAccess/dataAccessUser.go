@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hackathon/migrations"
 	"hackathon/models"
+	"log"
 	"log/slog"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -48,7 +49,8 @@ func (dao *DataAccess) LoginUser(ctx context.Context, userData models.User) (*mo
 }
 
 func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*models.User, error) {
-	slog.Debug(fmt.Sprintf("creating user %v\n", userData))
+	log.Println("hui")
+	//slog.Debug(fmt.Sprintf("creating user %v\n", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
 	data := migrations.MongoUser{
@@ -59,6 +61,7 @@ func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) (*m
 	}
 
 	_, err := coll.InsertOne(context.TODO(), data)
+	log.Println("jopa")
 	if err != nil {
 		slog.Debug(err.Error())
 		return nil, err
