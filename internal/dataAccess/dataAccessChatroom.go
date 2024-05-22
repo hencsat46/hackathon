@@ -5,21 +5,20 @@ import (
 	"fmt"
 	"hackathon/migrations"
 	"hackathon/models"
-	"log"
 	"log/slog"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroomData models.Chatroom) error {
-	slog.Debug(fmt.Sprintf("creating chatroom %v\n", chatroomData))
+func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroom models.Chatroom) error {
+	slog.Debug(fmt.Sprintf("creating chatroom %v", chatroom))
 
 	mongoChatroom := migrations.MongoChatroom{
-		ChatroomId: chatroomData.ChatroomId,
-		Name:       chatroomData.Name,
-		OwnerGUID:  chatroomData.OwnerGUID,
-		IsPrivate:  chatroomData.IsPrivate,
+		ChatroomId: chatroom.ChatroomId,
+		Name:       chatroom.Name,
+		OwnerGUID:  chatroom.OwnerGUID,
+		IsPrivate:  chatroom.IsPrivate,
 		Messages:   primitive.A{},
 	}
 
@@ -32,9 +31,9 @@ func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroomData models.C
 
 	coll = dao.mongoConnection.Database("ringo").Collection("users")
 
-	filter := bson.M{"guid": chatroomData.OwnerGUID}
+	filter := bson.M{"guid": chatroom.OwnerGUID}
 
-	update := bson.M{"$push": bson.M{"chatrooms": chatroomData.ChatroomId}}
+	update := bson.M{"$push": bson.M{"chatrooms": chatroom.ChatroomId}}
 
 	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
@@ -44,14 +43,14 @@ func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroomData models.C
 	return nil
 }
 
-func (dao *DataAccess) UpdateChatroom(ctx context.Context, chatroomData models.Chatroom) error {
-	slog.Debug(fmt.Sprintf("updating chatroom %v\n", chatroomData))
+func (dao *DataAccess) UpdateChatroom(ctx context.Context, chatroomID, chatroomName string) error {
+	slog.Debug(fmt.Sprintf("updating chatroom %v", chatroomID))
 
 	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 
-	filter := bson.M{"chatroom_id": chatroomData.ChatroomId}
+	filter := bson.M{"chatroom_id": chatroomID}
 
-	update := bson.M{"$set": bson.M{"name": chatroomData.Name}}
+	update := bson.M{"$set": bson.M{"name": chatroomName}}
 
 	if _, err := coll.UpdateOne(context.TODO(), filter, update); err != nil {
 		slog.Debug(err.Error())
@@ -61,11 +60,11 @@ func (dao *DataAccess) UpdateChatroom(ctx context.Context, chatroomData models.C
 	return nil
 }
 
-func (dao *DataAccess) DeleteChatroom(ctx context.Context, chatroomData models.Chatroom) error {
-	slog.Debug(fmt.Sprintf("deleting chatroom %v\n", chatroomData))
+func (dao *DataAccess) DeleteChatroom(ctx context.Context, chatroomID, ownerGUID string) error {
+	slog.Debug(fmt.Sprintf("deleting chatroom %v", chatroomID))
 	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 
-	filter := bson.M{"chatroom_id": chatroomData.ChatroomId}
+	filter := bson.M{"chatroom_id": chatroomID}
 
 	if _, err := coll.DeleteOne(context.TODO(), filter); err != nil {
 		slog.Debug(err.Error())
@@ -73,10 +72,8 @@ func (dao *DataAccess) DeleteChatroom(ctx context.Context, chatroomData models.C
 	}
 
 	coll = dao.mongoConnection.Database("ringo").Collection("users")
-	log.Println(chatroomData.ChatroomId)
-	log.Println(chatroomData.OwnerGUID)
-	filter = bson.M{"guid": chatroomData.OwnerGUID}
-	update := bson.M{"$pull": bson.M{"chatrooms": chatroomData.ChatroomId}}
+	filter = bson.M{"guid": ownerGUID}
+	update := bson.M{"$pull": bson.M{"chatrooms": chatroomID}}
 
 	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())

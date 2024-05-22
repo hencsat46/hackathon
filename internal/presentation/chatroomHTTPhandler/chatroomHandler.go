@@ -26,7 +26,7 @@ type IBusinessChatroom interface {
 	GetChatrooms(ctx context.Context) ([]models.Chatroom, error)
 	CreateChatroom(ctx context.Context, chatroom models.Chatroom) (string, error)
 	UpdateChatroom(ctx context.Context, chatroomID, chatroomName string) error
-	DeleteChatroom(ctx context.Context, chatroomID string) error
+	DeleteChatroom(ctx context.Context, ownerGUID, chatroomID string) error
 }
 
 func New(hubmngr *hubmanager.HubManager) *ChatroomHandler {
@@ -113,12 +113,13 @@ func (h *ChatroomHandler) UpdateChatroom(c *fiber.Ctx) error {
 
 func (h *ChatroomHandler) DeleteChatroom(c *fiber.Ctx) error {
 	chatroomID := c.Params("chatroomID")
+	ownerGUID := c.Params("GUID")
 	slog.Debug(fmt.Sprintf("delete chatroom endpoint called: %v", chatroomID))
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
 
-	if err := h.ChatroomBusiness.DeleteChatroom(ctx, chatroomID); err != nil {
+	if err := h.ChatroomBusiness.DeleteChatroom(ctx, ownerGUID, chatroomID); err != nil {
 		slog.Debug(err.Error())
 		if errors.Is(err, e.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(entities.Response{
