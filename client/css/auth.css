@@ -1,0 +1,128 @@
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+    color: black;
+}
+
+.wrapper {
+    max-width: 1180px;
+    margin: 0 auto;
+    height: 1080px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    height: 60px;
+    border-bottom: 1px solid rgb(85, 83, 83);
+}
+
+.navbar .links {
+    width: 100%;
+    display: flex;
+}
+
+.links a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    transition: .3s ease;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+
+}
+
+.links a:hover {
+    border-color: rgb(85, 83, 83);
+    /* background-color: rgb(229, 229, 229); */
+}
+
+.navbar .profile-pic {
+    width: 10%;
+}
+
+
+
+.profile-pic .login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    transition: .3s;
+}
+
+.profile-pic .login:hover {
+    background-color: black;
+    color: white;
+}
+
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.login-section {
+    border: 1px solid black;
+    border-radius: 30px;
+    padding: 60px 20px;
+    height: 700px;
+    max-width: 700px;
+    min-width: 290px;
+    margin: 50px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.username-header,
+.password-header {
+    font-size: 25px;
+}
+
+input.username-text,
+input.password-text {
+    font-size: 20px;
+    padding: 5px;
+}
+
+button.submit {
+    padding: 10px 30px;
+    font-size: 20px;
+    background-color: white;
+    border: 5px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+button.submit:hover {
+    background-color: black;
+    border: 5px solid white;
+    color: white;
+}
+
+a.registration-link:hover {
+    border-bottom: 2px solid black;
+    cursor: pointer;
+}
+
+.error {
+    color: red;
+    display: none;
+}
+
+.exists {
+    color: red;
+    display: none;
+}
+
+.password-invalid {
+    color: red;
+    display: none;
+}
