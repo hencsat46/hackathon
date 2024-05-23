@@ -8,11 +8,10 @@ type Room struct {
 }
 
 type User struct {
-	GUID              string
-	Username          string
-	OldHashedPassword string
-	HashedPassword    string
-	Email             string
+	GUID           string
+	Username       string
+	HashedPassword string
+	Email          string
 }
 
 type Message struct {

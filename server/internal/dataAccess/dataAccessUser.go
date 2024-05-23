@@ -19,7 +19,7 @@ func (dao *DataAccess) FetchUserChatrooms(ctx context.Context, GUID string) ([]m
 	log.Println(GUID)
 	filter := bson.D{{"owner", GUID}}
 
-	cursor, err := coll.Find(context.TODO(), filter)
+	cursor, err := coll.Find(ctx, filter)
 	if err != nil {
 		slog.Debug(err.Error())
 		return nil, err
@@ -46,7 +46,7 @@ func (dao *DataAccess) Login(ctx context.Context, userData models.User) (string,
 
 	mongoData := new(migrations.MongoUser)
 
-	err := coll.FindOne(context.TODO(), filter).Decode(&mongoData)
+	err := coll.FindOne(ctx, filter).Decode(&mongoData)
 	if err != nil {
 		slog.Debug(err.Error())
 		return "", err
@@ -68,7 +68,7 @@ func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) err
 		Chatrooms:      primitive.A{},
 	}
 
-	_, err := coll.InsertOne(context.TODO(), data)
+	_, err := coll.InsertOne(ctx, data)
 
 	if err != nil {
 		slog.Debug(err.Error())
@@ -86,7 +86,7 @@ func (dao *DataAccess) UpdateUsername(ctx context.Context, newUsername, GUID str
 
 	update := bson.D{{"$set", bson.D{{"username", newUsername}}}}
 
-	_, err := coll.UpdateOne(context.TODO(), filter, update)
+	_, err := coll.UpdateOne(ctx, filter, update)
 	if err != nil {
 		slog.Debug(err.Error())
 		return err
@@ -102,7 +102,7 @@ func (dao *DataAccess) UpdateEmail(ctx context.Context, newEmail, GUID string) e
 
 	update := bson.D{{"$set", bson.D{{"email", newEmail}}}}
 
-	_, err := coll.UpdateOne(context.TODO(), filter, update)
+	_, err := coll.UpdateOne(ctx, filter, update)
 	if err != nil {
 		slog.Debug(err.Error())
 		return err
@@ -118,7 +118,7 @@ func (dao *DataAccess) UpdatePassword(ctx context.Context, newPassword, GUID str
 
 	update := bson.D{{"$set", bson.D{{"password", newPassword}}}}
 
-	_, err := coll.UpdateOne(context.TODO(), filter, update)
+	_, err := coll.UpdateOne(ctx, filter, update)
 	if err != nil {
 		slog.Debug(err.Error())
 		return err
@@ -132,7 +132,7 @@ func (dao *DataAccess) DeleteUser(ctx context.Context, GUID string) error {
 
 	filter := bson.D{{"guid", GUID}}
 
-	_, err := coll.DeleteOne(context.TODO(), filter)
+	_, err := coll.DeleteOne(ctx, filter)
 	if err != nil {
 		slog.Debug(err.Error())
 		return err

@@ -30,7 +30,7 @@ func (dao *DataAccess) FetchMessagesForChatroom(ctx context.Context, chatroomID 
 
 	options := options.FindOne().SetProjection(bson.M{"messages": true})
 
-	if err := coll.FindOne(context.TODO(), filter, options).Decode(&array); err != nil {
+	if err := coll.FindOne(ctx, filter, options).Decode(&array); err != nil {
 		slog.Debug(err.Error())
 		return nil, err
 	}
@@ -46,9 +46,6 @@ func (dao *DataAccess) FetchMessagesForChatroom(ctx context.Context, chatroomID 
 		})
 		log.Println()
 	}
-	// for _,  := range messages.Messages {
-	// 	//log.Printf("%T", v)
-	// }
 
 	return messages, nil
 }
@@ -69,7 +66,7 @@ func (dao *DataAccess) CreateMessage(ctx context.Context, message models.Message
 
 	update := bson.M{"$push": bson.M{"messages": data}}
 
-	if _, err := coll.UpdateOne(context.TODO(), filter, update); err != nil {
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}
@@ -86,7 +83,7 @@ func (dao *DataAccess) UpdateMessage(ctx context.Context, newContent, messageID,
 
 	update := bson.M{"$set": bson.M{"messages.content": newContent}}
 
-	if _, err := coll.UpdateOne(context.TODO(), filter, update); err != nil {
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}
@@ -99,7 +96,7 @@ func (dao *DataAccess) DeleteMessage(ctx context.Context, messageData models.Mes
 
 	filter := bson.D{{"chatroom_id", messageData.ChatroomId}, {"chatrooms.message_id", messageData.MessageId}}
 
-	if _, err := coll.DeleteOne(context.TODO(), filter); err != nil {
+	if _, err := coll.DeleteOne(ctx, filter); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}
