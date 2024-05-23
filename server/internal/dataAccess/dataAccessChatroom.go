@@ -11,6 +11,23 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+func (dao *DataAccess) EnterChatroom(ctx context.Context, guid, cid string) error {
+	slog.Debug(fmt.Sprintf("entering chatroom with guid: %v, cid: %v", guid, cid))
+
+	coll := dao.mongoConnection.Database("ringo").Collection("users")
+
+	filter := bson.M{"guid": guid}
+
+	update := bson.M{"$addToSet": bson.M{"messages": cid}}
+
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
+		slog.Debug(err.Error())
+		return err
+	}
+
+	return nil
+}
+
 func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroom models.Chatroom) error {
 	slog.Debug(fmt.Sprintf("creating chatroom %v", chatroom))
 
