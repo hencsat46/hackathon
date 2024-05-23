@@ -301,7 +301,7 @@ func (h *UserHandler) ExitChatroom(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
 
-	if err := h.UserService.EnterChatroom(ctx, guid, cid); err != nil {
+	if err := h.UserService.QuitChatroom(ctx, guid, cid); err != nil {
 		slog.Debug(err.Error())
 		return c.Status(http.StatusBadRequest).JSON(entities.Response{
 			Error:   e.ErrBadRequest.Error(),
@@ -311,6 +311,6 @@ func (h *UserHandler) ExitChatroom(c *fiber.Ctx) error {
 
 	return c.Status(http.StatusOK).JSON(entities.Response{
 		Error:   "",
-		Content: "entered",
+		Content: "exited",
 	})
 }
