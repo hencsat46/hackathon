@@ -25,6 +25,7 @@ type IDataAccessUser interface {
 	DeleteUser(ctx context.Context, GUID string) error
 	GetUser(ctx context.Context, GUID string) (*models.User, error)
 	EnterChatroom(ctx context.Context, guid, cid string) error
+	QuitChatroom(ctx context.Context, guid, cid string) error
 }
 
 func New(userdao IDataAccessUser) *UserService {
@@ -113,6 +114,14 @@ func (b *UserService) DeleteUser(ctx context.Context, GUID string) error {
 
 func (b *UserService) EnterChatroom(ctx context.Context, guid, cid string) error {
 	if err := b.UserDao.EnterChatroom(ctx, guid, cid); err != nil {
+		slog.Debug(err.Error())
+		return err
+	}
+	return nil
+}
+
+func (b *UserService) QuitChatroom(ctx context.Context, guid, cid string) error {
+	if err := b.UserDao.QuitChatroom(ctx, guid, cid); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}
