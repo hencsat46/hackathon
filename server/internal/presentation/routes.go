@@ -62,6 +62,7 @@ func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 	userRoutes.Put("/updatePassword", h.jwtMiddleware.ValidateToken(h.UpdatePassword))
 	userRoutes.Delete("/delete/:GUID", h.jwtMiddleware.ValidateToken(h.DeleteUser))
 	userRoutes.Get("/userChatrooms/:guid", h.jwtMiddleware.ValidateToken(h.FetchUserChatrooms))
+	userRoutes.Get("/enterChatroom/:cid/:guid", h.jwtMiddleware.ValidateToken(h.EnterChatroom))
 
 	wsRoutes.Get("/:GUID/:cid", h.jwtMiddleware.ValidateToken(websocket.New(h.HandleWS)))
 

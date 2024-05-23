@@ -30,6 +30,7 @@ type IBusinessUser interface {
 	UpdateEmail(ctx context.Context, email, GUID string) error
 	UpdatePassword(ctx context.Context, oldPassword, newPassword, GUID string) error
 	DeleteUser(ctx context.Context, GUID string) error
+	EnterChatroom(ctx context.Context, guid, cid string) error
 }
 
 func New(userService IBusinessUser, jwt *jwt.JWT) *UserHandler {
@@ -266,5 +267,27 @@ func (h *UserHandler) FetchUserChatrooms(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(entities.Response{
 		Error:   "",
 		Content: chatrooms,
+	})
+}
+
+func (h *UserHandler) EnterChatroom(c *fiber.Ctx) error {
+	cid := c.Params("cid")
+	guid := c.Params("guid")
+	slog.Debug(fmt.Sprintf("enter chatroom endpoint called %s", cid))
+
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
+	defer cancel()
+
+	if err := h.UserService.EnterChatroom(ctx, guid, cid); err != nil {
+		slog.Debug(err.Error())
+		return c.Status(http.StatusBadRequest).JSON(entities.Response{
+			Error:   e.ErrBadRequest.Error(),
+			Content: nil,
+		})
+	}
+
+	return c.Status(http.StatusOK).JSON(entities.Response{
+		Error:   "",
+		Content: "entered",
 	})
 }
