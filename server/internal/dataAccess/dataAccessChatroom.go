@@ -18,7 +18,7 @@ func (dao *DataAccess) EnterChatroom(ctx context.Context, guid, cid string) erro
 
 	filter := bson.M{"guid": guid}
 
-	update := bson.M{"$addToSet": bson.M{"messages": cid}}
+	update := bson.M{"$addToSet": bson.M{"chatrooms": cid}}
 
 	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
