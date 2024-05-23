@@ -109,7 +109,7 @@ section.chatrooms-section {
 .chatroom {
     margin: 15px 10px;
     padding: 15px;
-    min-width: 310px;
+    min-width: 200px;
     min-height: 100px;
     border: 1px solid black;
     cursor: pointer;
@@ -124,4 +124,10 @@ section.chatrooms-section {
 .chatroom-name {
     font-size: 20px;
     width: 290px;
+}
+
+@media screen and (max-width: 430px) {
+    .chatroom-name {
+        width: 170px;
+    }
 }
