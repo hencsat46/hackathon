@@ -21,7 +21,7 @@ type MessageHandler struct {
 
 type IBusinessMessage interface {
 	FetchMessagesForChatroom(ctx context.Context, chatroomID string) ([]models.Message, error)
-	CreateMessage(ctx context.Context, message models.Message) error
+	CreateMessage(ctx context.Context, message models.Message) (string, error)
 	UpdateMessage(ctx context.Context, newContent, messageID, chatroomID string) error
 	DeleteMessage(ctx context.Context, message models.Message) error
 }
@@ -74,7 +74,7 @@ func (h *MessageHandler) UpdateMessage(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 	defer cancel()
 
-	if err := h.MessageBusiness.UpdateMessage(ctx, request.Content, request.MessageId, request.MessageId); err != nil {
+	if err := h.MessageBusiness.UpdateMessage(ctx, request.Content, request.MessageId, request.ChatroomID); err != nil {
 		slog.Debug(err.Error())
 		if errors.Is(err, e.ErrNotFound) {
 			return c.Status(http.StatusNotFound).JSON(entities.Response{

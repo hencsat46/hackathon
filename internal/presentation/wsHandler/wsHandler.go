@@ -65,7 +65,6 @@ func (h *WSHandler) listenUserMessage(c *websocket.Conn, cid, guid string) {
 			h.hubManager.DeleteParticipant(c, cid, guid)
 			return
 		}
-		h.hubManager.SendMessage(msg)
 
 		message := models.Message{
 			MessageId:  msg.MessageID,
@@ -77,8 +76,14 @@ func (h *WSHandler) listenUserMessage(c *websocket.Conn, cid, guid string) {
 
 		ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 		defer cancel()
-		if err := h.msgBusiness.CreateMessage(ctx, message); err != nil {
+
+		messageID, err := h.msgBusiness.CreateMessage(ctx, message)
+		if err != nil {
 			slog.Debug(err.Error())
 		}
+
+		msg.MessageID = messageID
+
+		h.hubManager.SendMessage(msg)
 	}
 }

@@ -22,8 +22,9 @@ type UpdatePasswordDTO struct {
 }
 
 type MessageDTO struct {
-	MessageId string `json:"message_id"`
-	Content   string `json:"content"`
+	MessageId  string `json:"message_id"`
+	ChatroomID string `json:"chatroom_id"`
+	Content    string `json:"content"`
 }
 
 type Response struct {

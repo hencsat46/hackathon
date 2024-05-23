@@ -24,7 +24,7 @@ func (dao *DataAccess) FetchUserChatrooms(ctx context.Context, GUID string) ([]m
 		slog.Debug(err.Error())
 		return nil, err
 	}
-	
+
 	for cursor.Next(ctx) {
 		result := models.Chatroom{}
 		if err = cursor.Decode(&result); err != nil {
@@ -32,7 +32,7 @@ func (dao *DataAccess) FetchUserChatrooms(ctx context.Context, GUID string) ([]m
 			return nil, err
 		}
 		chatrooms = append(chatrooms, result)
-		
+
 	}
 
 	return chatrooms, nil
@@ -94,7 +94,7 @@ func (dao *DataAccess) UpdateUsername(ctx context.Context, newUsername, GUID str
 	return nil
 }
 
-func (dao *DataAccess) UpdateEmail(ctx context.Context, GUID, newEmail string) error {
+func (dao *DataAccess) UpdateEmail(ctx context.Context, newEmail, GUID string) error {
 	slog.Debug(fmt.Sprintf("updating email %v", GUID))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
@@ -110,7 +110,7 @@ func (dao *DataAccess) UpdateEmail(ctx context.Context, GUID, newEmail string) e
 	return nil
 }
 
-func (dao *DataAccess) UpdatePassword(ctx context.Context, GUID, newPassword string) error {
+func (dao *DataAccess) UpdatePassword(ctx context.Context, newPassword, GUID string) error {
 	slog.Debug(fmt.Sprintf("updating password %v", GUID))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 

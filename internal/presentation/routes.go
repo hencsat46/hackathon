@@ -57,17 +57,17 @@ func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 
 	userRoutes.Post("/create", h.CreateUser)
 	userRoutes.Post("/login", h.Login)
-	userRoutes.Put("/updateUsername", h.jwtMiddleware.ValidateToken(h.UpdateChatroom))
+	userRoutes.Put("/updateUsername", h.jwtMiddleware.ValidateToken(h.UpdateUsername))
 	userRoutes.Put("/updateEmail", h.jwtMiddleware.ValidateToken(h.UpdateEmail))
 	userRoutes.Put("/updatePassword", h.jwtMiddleware.ValidateToken(h.UpdatePassword))
-	userRoutes.Delete("/delete", h.jwtMiddleware.ValidateToken(h.DeleteUser))
+	userRoutes.Delete("/delete/:GUID", h.jwtMiddleware.ValidateToken(h.DeleteUser))
 	userRoutes.Get("/userChatrooms/:guid", h.jwtMiddleware.ValidateToken(h.FetchUserChatrooms))
 
 	wsRoutes.Get("/:GUID/:cid", h.jwtMiddleware.ValidateToken(websocket.New(h.HandleWS)))
 
 	chatroomRoutes.Post("/create", h.jwtMiddleware.ValidateToken(h.CreateChatroom))
 	chatroomRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.UpdateChatroom))
-	chatroomRoutes.Delete("/:chatroomID", h.jwtMiddleware.ValidateToken(h.DeleteChatroom))
+	chatroomRoutes.Delete("/:chatroomID/:GUID", h.jwtMiddleware.ValidateToken(h.DeleteChatroom))
 
 	messageRoutes.Get("/:cid", h.jwtMiddleware.ValidateToken(h.FetchMessagesForChatroom))
 	messageRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.UpdateMessage))

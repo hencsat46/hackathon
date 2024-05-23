@@ -2,6 +2,7 @@ package dataaccess
 
 import (
 	"context"
+	"fmt"
 	"hackathon/migrations"
 	"hackathon/models"
 	"log"
@@ -13,7 +14,7 @@ import (
 )
 
 type MongoArray struct {
-	Id primitive.ObjectID
+	Id    primitive.ObjectID
 	Array []models.Message `bson:"messages"`
 }
 
@@ -33,23 +34,21 @@ func (dao *DataAccess) FetchMessagesForChatroom(ctx context.Context, chatroomID 
 		slog.Debug(err.Error())
 		return nil, err
 	}
-	
-	
+
 	for _, v := range array.Messages {
 		messages = append(messages, models.Message{
-			MessageId: v.(primitive.D)[0].Value.(string),
+			MessageId:  v.(primitive.D)[0].Value.(string),
 			ChatroomId: v.(primitive.D)[1].Value.(string),
 			SenderGUID: v.(primitive.D)[2].Value.(string),
 			SenderName: v.(primitive.D)[3].Value.(string),
-			Content: v.(primitive.D)[4].Value.(string),
-			Image: v.(primitive.D)[5].Value.(bool),
+			Content:    v.(primitive.D)[4].Value.(string),
+			Image:      v.(primitive.D)[5].Value.(bool),
 		})
 		log.Println()
 	}
 	// for _,  := range messages.Messages {
 	// 	//log.Printf("%T", v)
 	// }
-	
 
 	return messages, nil
 }
@@ -79,6 +78,8 @@ func (dao *DataAccess) CreateMessage(ctx context.Context, message models.Message
 }
 
 func (dao *DataAccess) UpdateMessage(ctx context.Context, newContent, messageID, chatroomId string) error {
+	slog.Debug(fmt.Sprintf("updating message: message id: %v, chatroom id: %v, new content: %v", messageID, chatroomId, newContent))
+
 	coll := dao.mongoConnection.Database("ringo").Collection("messages")
 
 	filter := bson.M{"chatroom_id": chatroomId, "chatrooms.message_id": messageID}

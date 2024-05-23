@@ -2,8 +2,11 @@ package messageservice
 
 import (
 	"context"
+	"fmt"
 	"hackathon/models"
 	"log/slog"
+
+	"github.com/beevik/guid"
 )
 
 type MessageService struct {
@@ -33,15 +36,18 @@ func (b *MessageService) FetchMessagesForChatroom(ctx context.Context, chatroomI
 	return messages, nil
 }
 
-func (b *MessageService) CreateMessage(ctx context.Context, message models.Message) error {
+func (b *MessageService) CreateMessage(ctx context.Context, message models.Message) (string, error) {
+	message.MessageId = guid.NewString()
+
 	if err := b.MessageDataAccess.CreateMessage(ctx, message); err != nil {
 		slog.Debug(err.Error())
-		return err
+		return "", err
 	}
-	return nil
+	return message.MessageId, nil
 }
 
 func (b *MessageService) UpdateMessage(ctx context.Context, newContent, messageID, chatroomID string) error {
+	slog.Debug(fmt.Sprintf("updating message: %v, %v", messageID, chatroomID))
 	if err := b.MessageDataAccess.UpdateMessage(ctx, newContent, messageID, chatroomID); err != nil {
 		slog.Debug(err.Error())
 		return err

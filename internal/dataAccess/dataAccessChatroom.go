@@ -60,7 +60,7 @@ func (dao *DataAccess) UpdateChatroom(ctx context.Context, chatroomID, chatroomN
 	return nil
 }
 
-func (dao *DataAccess) DeleteChatroom(ctx context.Context, chatroomID, ownerGUID string) error {
+func (dao *DataAccess) DeleteChatroom(ctx context.Context, ownerGUID, chatroomID string) error {
 	slog.Debug(fmt.Sprintf("deleting chatroom %v", chatroomID))
 	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 
