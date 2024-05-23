@@ -6,6 +6,8 @@ import (
 	"hackathon/models"
 	"log/slog"
 
+	e "hackathon/exceptions"
+
 	"github.com/beevik/guid"
 )
 
@@ -21,6 +23,7 @@ type IDataAccessUser interface {
 	UpdateEmail(ctx context.Context, email, GUID string) error
 	UpdatePassword(ctx context.Context, newPassword, GUID string) error
 	DeleteUser(ctx context.Context, GUID string) error
+	GetUser(ctx context.Context, GUID string) (*models.User, error)
 }
 
 func New(userdao IDataAccessUser) *UserService {
@@ -81,6 +84,16 @@ func (b *UserService) UpdateEmail(ctx context.Context, email, GUID string) error
 
 // TODO: logic with comparison of provided old password with real old password
 func (b *UserService) UpdatePassword(ctx context.Context, oldPassword, newPassword, GUID string) error {
+	user, err := b.UserDao.GetUser(ctx, GUID)
+	if err != nil {
+		slog.Debug(err.Error())
+		return err
+	}
+
+	if oldPassword != user.HashedPassword {
+		return e.ErrPasswordIncorrect
+	}
+
 	if err := b.UserDao.UpdatePassword(ctx, newPassword, GUID); err != nil {
 		slog.Debug(err.Error())
 		return err
