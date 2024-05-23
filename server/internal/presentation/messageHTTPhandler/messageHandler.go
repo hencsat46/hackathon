@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -104,6 +105,7 @@ func (h *MessageHandler) DeleteMessage(c *fiber.Ctx) error {
 			Content: nil,
 		})
 	}
+	log.Println(request)
 	slog.Debug(fmt.Sprintf("delete message endpoint called: %v", request))
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)

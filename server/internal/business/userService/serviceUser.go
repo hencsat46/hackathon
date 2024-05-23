@@ -85,12 +85,13 @@ func (b *UserService) UpdateEmail(ctx context.Context, email, GUID string) error
 // TODO: logic with comparison of provided old password with real old password
 func (b *UserService) UpdatePassword(ctx context.Context, oldPassword, newPassword, GUID string) error {
 	user, err := b.UserDao.GetUser(ctx, GUID)
+	slog.Debug(fmt.Sprintf("%v", user))
 	if err != nil {
 		slog.Debug(err.Error())
 		return err
 	}
 
-	if oldPassword != user.HashedPassword {
+	if oldPassword != user.Password {
 		return e.ErrPasswordIncorrect
 	}
 

@@ -91,12 +91,27 @@ func (dao *DataAccess) UpdateMessage(ctx context.Context, newContent, messageID,
 	return nil
 }
 
+// func (dao *DataAccess) DeleteMessage(ctx context.Context, messageData models.Message) error {
+// coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
+//
+// filter := bson.M{"messages.message_id": messageData.MessageId}
+//
+// if _, err := coll.DeleteOne(ctx, filter); err != nil {
+// slog.Debug(err.Error())
+// return err
+// }
+// return nil
+// }
+
 func (dao *DataAccess) DeleteMessage(ctx context.Context, messageData models.Message) error {
-	coll := dao.mongoConnection.Database("ringo").Collection("messages")
+	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 
-	filter := bson.D{{"chatroom_id", messageData.ChatroomId}, {"chatrooms.message_id", messageData.MessageId}}
+	filter := bson.M{"chatroom_id": messageData.ChatroomId} // Filter by chatroom_id
+	update := bson.M{
+		"$pull": bson.M{"messages": bson.M{"message_id": messageData.MessageId}},
+	}
 
-	if _, err := coll.DeleteOne(ctx, filter); err != nil {
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}

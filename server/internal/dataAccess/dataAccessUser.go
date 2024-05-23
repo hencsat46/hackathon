@@ -42,7 +42,7 @@ func (dao *DataAccess) Login(ctx context.Context, userData models.User) (string,
 	slog.Debug(fmt.Sprintf("login user %v", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
-	filter := bson.D{{"username", userData.Username}, {"password", userData.HashedPassword}}
+	filter := bson.D{{"username", userData.Username}, {"password", userData.Password}}
 
 	mongoData := new(migrations.MongoUser)
 
@@ -63,7 +63,7 @@ func (dao *DataAccess) CreateUser(ctx context.Context, userData models.User) err
 	data := migrations.MongoUser{
 		GUID:           userData.GUID,
 		Username:       userData.Username,
-		HashedPassword: userData.HashedPassword,
+		HashedPassword: userData.Password,
 		Email:          userData.Email,
 		Chatrooms:      primitive.A{},
 	}
