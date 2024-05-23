@@ -10,7 +10,7 @@
 .wrapper {
     max-width: 1180px;
     margin: 0 auto;
-    height: 1080px;
+    height: 100%;
 }
 
 .navbar {
@@ -82,21 +82,35 @@
 .password {
     padding: 0 30px;
     margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .username-header,
 .password-header {
     font-size: 30px;
+
 }
 
 input.username-text,
 input.password-text {
+    display: block;
     min-height: 30px;
     min-width: 190px;
+    max-width: 400px;
     width: 100%;
 }
 
+.registration {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
 .button-section {
+    margin-top: 30px;
     display: flex;
     justify-content: center;
 }
@@ -139,11 +153,11 @@ a.registration-link:hover {
 
 @media (max-width: 600px) {
 
-    .username,
-    .password {
-        padding: 0 10px;
-        /* Decrease padding */
+    .login-section {
+        min-width: 280px;
     }
+
+
 
     .username-header,
     .password-header {

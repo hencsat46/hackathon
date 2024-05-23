@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/profile.css">
+    <title>Profile</title>
+</head>
+<body>
+    <div class="wrapper">
+
+        <nav class="navbar">
+            <div class="links">
+                <a href="http://localhost:5000/" class="home">Home Page</a>
+                <a href="http://localhost:5000/profile" class="profile">Profile</a>
+            </div>
+        </nav>
+        <div class="person-info">
+            <div class="short-info">
+                <div class="picture-image">
+                    <img src="/public/img/empty-icon.png" alt="" class="profile-image">
+                </div>
+                <div class="profile-username">chick</div>
+                <section class="buttons">
+                    <button class="edit-button" onclick="editProfile(this)">Изменить</button>
+                    <button class="quit-button" onclick="quit()">Выйти</button>
+                </section>
+            </div>
+            <div class="full-info">
+                <div class="info-name">
+                    <div class="name-block">
+                        <div class="name-title">Имя</div>
+                        <div class="name-text">Отсутствует</div>
+                    </div>
+                    <div class="surname-block">
+                        <div class="surname-title">Фамилия</div>
+                        <div class="surname-text">Отсутствует</div>
+                    </div>
+                    <div class="patronomyc-block">
+                        <div class="patronomyc-title">Отчество</div>
+                        <div class="patronomyc-text">Отсутствует</div>
+                    </div>
+                    <div class="phone-block">
+                        <div class="phone-title">Телефон</div>
+                        <div class="phone-text">Отсутствует</div>
+                    </div>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+</body>
+</html>

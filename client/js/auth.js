@@ -31,24 +31,21 @@ async function send() {
 
 function moveToSignup() {
     const signupHtml = `
-        <div class="username">
-            <div class="exists">Такой пользователь существует</div>
-            <div class="username-header">Логин</div>
-            <input type="text" class="username-text">
-        </div>
-        <div class="password">
-            <div class="password-header">Пароль</div>
-            <input type="password" class="password-text">
-        </div>
-        <div class="password">
-            <div class="error">Пароли не совпадают</div>
-            <div class="password-header">Повторите пароль</div>
-            <input type="password" class="password-text">
-        </div>
-        <button class="submit" onclick="signup()">Зарегистрироваться</button>
-        <div class="registration">
-            <a class="registration-link" onclick="moveToLogin()">Войти</a>
-        </div>
+    <div class="username">
+    <div class="username-header">Логин</div>
+    <input type="text" class="username-text">
+</div>
+<div class="password">
+    <div class="password-invalid">Неверный пароль</div>
+    <div class="password-header">Пароль</div>
+    <input type="password" class="password-text">
+</div>
+<div class="button-section">
+    <button class="submit" onclick="send()">Зарегистрироваться</button>
+</div>
+<div class="registration">
+    <a class="registration-link" onclick="moveToLogin()">Войти</a>
+</div>
     `
 
     const oldLogin = document.querySelector('div.login-section')
@@ -68,7 +65,9 @@ function moveToLogin() {
         <div class="password-header">Пароль</div>
         <input type="password" class="password-text">
     </div>
-    <button class="submit" onclick="send()">Войти</button>
+    <div class="button-section">
+                    <button class="submit" onclick="send()">Войти</button>
+                </div>
     <div class="registration">
         <a class="registration-link" onclick="moveToSignup()">Зарегистрироваться</a>
     </div>
