@@ -77,11 +77,11 @@ func (dao *DataAccess) CreateMessage(ctx context.Context, message models.Message
 func (dao *DataAccess) UpdateMessage(ctx context.Context, newContent, messageID, chatroomId string) error {
 	slog.Debug(fmt.Sprintf("updating message: message id: %v, chatroom id: %v, new content: %v", messageID, chatroomId, newContent))
 
-	coll := dao.mongoConnection.Database("ringo").Collection("messages")
+	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 
-	filter := bson.M{"chatroom_id": chatroomId, "chatrooms.message_id": messageID}
+	filter := bson.M{"messages.message_id": messageID}
 
-	update := bson.M{"$set": bson.M{"messages.content": newContent}}
+	update := bson.M{"$set": bson.M{"messages.$.content": newContent}}
 
 	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
