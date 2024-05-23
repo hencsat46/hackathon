@@ -28,6 +28,23 @@ func (dao *DataAccess) EnterChatroom(ctx context.Context, guid, cid string) erro
 	return nil
 }
 
+func (dao *DataAccess) QuitChatroom(ctx context.Context, guid, cid string) error {
+	slog.Debug(fmt.Sprintf("quitting chatroom with guid: %v, cid: %v", guid, cid))
+
+	coll := dao.mongoConnection.Database("ringo").Collection("users")
+
+	filter := bson.M{"guid": guid}
+
+	update := bson.M{"$pull": bson.M{"chatrooms": cid}}
+
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
+		slog.Debug(err.Error())
+		return err
+	}
+
+	return nil
+}
+
 func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroom models.Chatroom) error {
 	slog.Debug(fmt.Sprintf("creating chatroom %v", chatroom))
 
