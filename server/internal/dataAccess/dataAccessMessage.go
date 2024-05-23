@@ -30,7 +30,7 @@ func (dao *DataAccess) FetchMessagesForChatroom(ctx context.Context, chatroomID 
 
 	options := options.FindOne().SetProjection(bson.M{"messages": true})
 
-	if err := coll.FindOne(context.TODO(), filter, options).Decode(&array); err != nil {
+	if err := coll.FindOne(ctx, filter, options).Decode(&array); err != nil {
 		slog.Debug(err.Error())
 		return nil, err
 	}
@@ -46,9 +46,6 @@ func (dao *DataAccess) FetchMessagesForChatroom(ctx context.Context, chatroomID 
 		})
 		log.Println()
 	}
-	// for _,  := range messages.Messages {
-	// 	//log.Printf("%T", v)
-	// }
 
 	return messages, nil
 }
@@ -69,7 +66,7 @@ func (dao *DataAccess) CreateMessage(ctx context.Context, message models.Message
 
 	update := bson.M{"$push": bson.M{"messages": data}}
 
-	if _, err := coll.UpdateOne(context.TODO(), filter, update); err != nil {
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}
@@ -80,13 +77,13 @@ func (dao *DataAccess) CreateMessage(ctx context.Context, message models.Message
 func (dao *DataAccess) UpdateMessage(ctx context.Context, newContent, messageID, chatroomId string) error {
 	slog.Debug(fmt.Sprintf("updating message: message id: %v, chatroom id: %v, new content: %v", messageID, chatroomId, newContent))
 
-	coll := dao.mongoConnection.Database("ringo").Collection("messages")
+	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 
-	filter := bson.M{"chatroom_id": chatroomId, "chatrooms.message_id": messageID}
+	filter := bson.M{"messages.message_id": messageID}
 
-	update := bson.M{"$set": bson.M{"messages.content": newContent}}
+	update := bson.M{"$set": bson.M{"messages.$.content": newContent}}
 
-	if _, err := coll.UpdateOne(context.TODO(), filter, update); err != nil {
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}
@@ -94,12 +91,27 @@ func (dao *DataAccess) UpdateMessage(ctx context.Context, newContent, messageID,
 	return nil
 }
 
+// func (dao *DataAccess) DeleteMessage(ctx context.Context, messageData models.Message) error {
+// coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
+//
+// filter := bson.M{"messages.message_id": messageData.MessageId}
+//
+// if _, err := coll.DeleteOne(ctx, filter); err != nil {
+// slog.Debug(err.Error())
+// return err
+// }
+// return nil
+// }
+
 func (dao *DataAccess) DeleteMessage(ctx context.Context, messageData models.Message) error {
-	coll := dao.mongoConnection.Database("ringo").Collection("messages")
+	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 
-	filter := bson.D{{"chatroom_id", messageData.ChatroomId}, {"chatrooms.message_id", messageData.MessageId}}
+	filter := bson.M{"chatroom_id": messageData.ChatroomId} // Filter by chatroom_id
+	update := bson.M{
+		"$pull": bson.M{"messages": bson.M{"message_id": messageData.MessageId}},
+	}
 
-	if _, err := coll.DeleteOne(context.TODO(), filter); err != nil {
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}

@@ -53,7 +53,7 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 
 	user := models.User{
 		Username: request.Username,
-		HashedPassword: request.Password,
+		Password: request.Password,
 		Email:    request.Email,
 	}
 
@@ -90,7 +90,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	userEntity := models.User{
 		GUID:     request.GUID,
 		Username: request.Username,
-		HashedPassword: request.Password,
+		Password: request.Password,
 		Email:    request.Email,
 	}
 

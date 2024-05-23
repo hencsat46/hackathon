@@ -1,9 +1,9 @@
 package entities
 
 type ChatroomDTO struct {
-	ID                string `json:"id"`
+	ID                string `json:"chatroom_id"`
 	Name              string `json:"name"`
-	OwnerGUID         string `json:"owner_GUID"`
+	OwnerGUID         string `json:"guid"`
 	IsPrivate         bool   `json:"is_private"`
 	ParticipantsLimit int    `json:"participants_limit"`
 }
@@ -16,7 +16,7 @@ type UserDTO struct {
 }
 
 type UpdatePasswordDTO struct {
-	GUID        string `json:"GUID"`
+	GUID        string `json:"guid"`
 	OldPassword string `json:"old_password"`
 	NewPassword string `json:"password"`
 }

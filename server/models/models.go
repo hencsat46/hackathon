@@ -8,17 +8,16 @@ type Room struct {
 }
 
 type User struct {
-	GUID              string
-	Username          string
-	OldHashedPassword string
-	HashedPassword    string
-	Email             string
+	GUID     string
+	Username string
+	Password string
+	Email    string
 }
 
 type Message struct {
-	MessageId  string `bson:"message_id"`
-	ChatroomId string `bson:"chatroom_id"`
-	SenderGUID string `bson:"sender_guid"`
+	MessageId  string `bson:"message_id" json:"message_id"`
+	ChatroomId string `bson:"chatroom_id" json:"chatroom_id"`
+	SenderGUID string `bson:"sender_guid" json:"sender_guid"`
 	SenderName string `bson:"sender_name"`
 	Content    string `bson:"content"`
 	Image      bool   `bson:"image"`

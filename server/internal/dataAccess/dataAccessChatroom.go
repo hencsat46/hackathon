@@ -52,7 +52,7 @@ func (dao *DataAccess) UpdateChatroom(ctx context.Context, chatroomID, chatroomN
 
 	update := bson.M{"$set": bson.M{"name": chatroomName}}
 
-	if _, err := coll.UpdateOne(context.TODO(), filter, update); err != nil {
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}
@@ -66,7 +66,7 @@ func (dao *DataAccess) DeleteChatroom(ctx context.Context, ownerGUID, chatroomID
 
 	filter := bson.M{"chatroom_id": chatroomID}
 
-	if _, err := coll.DeleteOne(context.TODO(), filter); err != nil {
+	if _, err := coll.DeleteOne(ctx, filter); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}
