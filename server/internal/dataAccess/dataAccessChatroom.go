@@ -11,6 +11,40 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+func (dao *DataAccess) EnterChatroom(ctx context.Context, guid, cid string) error {
+	slog.Debug(fmt.Sprintf("entering chatroom with guid: %v, cid: %v", guid, cid))
+
+	coll := dao.mongoConnection.Database("ringo").Collection("users")
+
+	filter := bson.M{"guid": guid}
+
+	update := bson.M{"$addToSet": bson.M{"chatrooms": cid}}
+
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
+		slog.Debug(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func (dao *DataAccess) QuitChatroom(ctx context.Context, guid, cid string) error {
+	slog.Debug(fmt.Sprintf("quitting chatroom with guid: %v, cid: %v", guid, cid))
+
+	coll := dao.mongoConnection.Database("ringo").Collection("users")
+
+	filter := bson.M{"guid": guid}
+
+	update := bson.M{"$pull": bson.M{"chatrooms": cid}}
+
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
+		slog.Debug(err.Error())
+		return err
+	}
+
+	return nil
+}
+
 func (dao *DataAccess) CreateChatroom(ctx context.Context, chatroom models.Chatroom) error {
 	slog.Debug(fmt.Sprintf("creating chatroom %v", chatroom))
 
@@ -52,7 +86,7 @@ func (dao *DataAccess) UpdateChatroom(ctx context.Context, chatroomID, chatroomN
 
 	update := bson.M{"$set": bson.M{"name": chatroomName}}
 
-	if _, err := coll.UpdateOne(context.TODO(), filter, update); err != nil {
+	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}
@@ -66,7 +100,7 @@ func (dao *DataAccess) DeleteChatroom(ctx context.Context, ownerGUID, chatroomID
 
 	filter := bson.M{"chatroom_id": chatroomID}
 
-	if _, err := coll.DeleteOne(context.TODO(), filter); err != nil {
+	if _, err := coll.DeleteOne(ctx, filter); err != nil {
 		slog.Debug(err.Error())
 		return err
 	}

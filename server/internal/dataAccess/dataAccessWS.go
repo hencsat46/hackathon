@@ -2,6 +2,7 @@ package dataaccess
 
 import (
 	"context"
+	"fmt"
 	"hackathon/models"
 	"log/slog"
 
@@ -20,6 +21,7 @@ func (dao *DataAccess) GetUser(ctx context.Context, GUID string) (*models.User, 
 		return nil, err
 	}
 
+	slog.Debug(fmt.Sprintf("%v", result))
 	return result, nil
 }
 
