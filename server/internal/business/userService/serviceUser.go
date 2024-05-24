@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"hackathon/models"
+	hash "hackathon/pkg/hasher"
 	"log/slog"
 
 	e "hackathon/exceptions"
@@ -47,6 +48,15 @@ func (b *UserService) FetchUserChatrooms(ctx context.Context, GUID string) ([]mo
 }
 
 func (b *UserService) Login(ctx context.Context, user models.User) (string, error) {
+	usr, err := b.UserDao.GetUser(ctx, user.GUID)
+	if err != nil {
+		slog.Debug(err.Error())
+	}
+
+	if hash.Hshr.Validate(usr.Password, user.Password) {
+		return "", e.ErrPasswordIncorrect
+	}
+
 	guid, err := b.UserDao.Login(ctx, user)
 	if err != nil {
 		slog.Debug(err.Error())
@@ -58,6 +68,8 @@ func (b *UserService) Login(ctx context.Context, user models.User) (string, erro
 
 func (b *UserService) CreateUser(ctx context.Context, user models.User) (string, error) {
 	user.GUID = guid.NewString()
+
+	user.Password = hash.Hshr.Hash(user.Password)
 
 	err := b.UserDao.CreateUser(ctx, user)
 	if err != nil {
@@ -93,7 +105,7 @@ func (b *UserService) UpdatePassword(ctx context.Context, oldPassword, newPasswo
 		return err
 	}
 
-	if oldPassword != user.Password {
+	if hash.Hshr.Validate(user.Password, oldPassword) {
 		return e.ErrPasswordIncorrect
 	}
 
