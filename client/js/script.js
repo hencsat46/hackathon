@@ -28,10 +28,21 @@ async function fetchChatrooms() {
     }
 }
 
-function moveToChat(element) {
+async function moveToChat(element) {
     const chatId = element.getAttribute("id")
 
     localStorage.setItem("chatroom_id", chatId)
+
+    const request = new Request(`http://localhost:3000/user/enterChatroom/${chatId}/${localStorage.getItem("guid")}`, {
+        method: "GET",
+        mode: "cors",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+    })
+
+    const response = await (await fetch(request)).json()
+    console.log(response)
 
     window.location.replace("http://localhost:5000/chat")
 }

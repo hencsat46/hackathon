@@ -15,7 +15,7 @@ type MessageService struct {
 
 type IDataAccessMessage interface {
 	FetchMessagesForChatroom(ctx context.Context, chatroomID string) ([]models.Message, error)
-	CreateMessage(ctx context.Context, message models.Message) error
+	CreateMessage(ctx context.Context, message models.Message) (string, error)
 	UpdateMessage(ctx context.Context, newContent, messageID, chatroomID string) error
 	DeleteMessage(ctx context.Context, message models.Message) error
 }
@@ -36,14 +36,15 @@ func (b *MessageService) FetchMessagesForChatroom(ctx context.Context, chatroomI
 	return messages, nil
 }
 
-func (b *MessageService) CreateMessage(ctx context.Context, message models.Message) (string, error) {
+func (b *MessageService) CreateMessage(ctx context.Context, message models.Message) (string, string, error) {
 	message.MessageId = guid.NewString()
 
-	if err := b.MessageDataAccess.CreateMessage(ctx, message); err != nil {
+	name, err := b.MessageDataAccess.CreateMessage(ctx, message)
+	if err != nil {
 		slog.Debug(err.Error())
-		return "", err
+		return "", "", err
 	}
-	return message.MessageId, nil
+	return message.MessageId, name, nil
 }
 
 func (b *MessageService) UpdateMessage(ctx context.Context, newContent, messageID, chatroomID string) error {

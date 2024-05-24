@@ -50,7 +50,24 @@ func (dao *DataAccess) FetchMessagesForChatroom(ctx context.Context, chatroomID 
 	return messages, nil
 }
 
-func (dao *DataAccess) CreateMessage(ctx context.Context, message models.Message) error {
+func (dao *DataAccess) getName(ctx context.Context, guid string) string {
+	var result migrations.MongoUser
+	coll := dao.mongoConnection.Database("ringo").Collection("users")
+
+	filter := bson.M{"guid": guid}
+
+	if err := coll.FindOne(ctx, filter).Decode(&result); err != nil {
+		slog.Debug(err.Error())
+		return ""
+	}
+
+	return result.Username
+}
+
+func (dao *DataAccess) CreateMessage(ctx context.Context, message models.Message) (string, error) {
+
+	name := dao.getName(ctx, message.SenderGUID)
+
 	coll := dao.mongoConnection.Database("ringo").Collection("chatrooms")
 
 	filter := bson.M{"chatroom_id": message.ChatroomId}
@@ -59,7 +76,7 @@ func (dao *DataAccess) CreateMessage(ctx context.Context, message models.Message
 		MessageId:  message.MessageId,
 		ChatroomId: message.ChatroomId,
 		SenderGUID: message.SenderGUID,
-		SenderName: message.SenderName,
+		SenderName: name,
 		Content:    message.Content,
 		Image:      message.Image,
 	}
@@ -68,10 +85,10 @@ func (dao *DataAccess) CreateMessage(ctx context.Context, message models.Message
 
 	if _, err := coll.UpdateOne(ctx, filter, update); err != nil {
 		slog.Debug(err.Error())
-		return err
+		return "", err
 	}
 
-	return nil
+	return name, nil
 }
 
 func (dao *DataAccess) UpdateMessage(ctx context.Context, newContent, messageID, chatroomId string) error {

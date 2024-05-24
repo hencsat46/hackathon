@@ -22,7 +22,7 @@ type MessageHandler struct {
 
 type IBusinessMessage interface {
 	FetchMessagesForChatroom(ctx context.Context, chatroomID string) ([]models.Message, error)
-	CreateMessage(ctx context.Context, message models.Message) (string, error)
+	CreateMessage(ctx context.Context, message models.Message) (string, string, error)
 	UpdateMessage(ctx context.Context, newContent, messageID, chatroomID string) error
 	DeleteMessage(ctx context.Context, message models.Message) error
 }

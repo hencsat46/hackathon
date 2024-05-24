@@ -77,12 +77,13 @@ func (h *WSHandler) listenUserMessage(c *websocket.Conn, cid, guid string) {
 		ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
 		defer cancel()
 
-		messageID, err := h.msgBusiness.CreateMessage(ctx, message)
+		messageID, name, err := h.msgBusiness.CreateMessage(ctx, message)
 		if err != nil {
 			slog.Debug(err.Error())
 		}
 
 		msg.MessageID = messageID
+		msg.SenderName = name
 
 		h.hubManager.SendMessage(msg)
 	}
