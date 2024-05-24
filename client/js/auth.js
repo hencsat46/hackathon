@@ -17,9 +17,10 @@ async function send() {
     })
     
     const response = await (await fetch(request)).json()
-
+    console.log(response)
     if (response.error == "") {
         localStorage.setItem("token", response.content.token)
+        localStorage.setItem("guid", response.content.guid)
         window.location.replace("http://localhost:5000/")
     }
 

@@ -16,21 +16,48 @@ async function fetchChatrooms() {
 
     if (response.error == "") {
         const chatrooms = response.content
+        console.log(chatrooms)
         const section = document.querySelector(".chatrooms-section")
         for (let i = 0; i < chatrooms.length; i++) {
+
             const chat = document.createElement("div")
-            chat.classList.add("chatroom")
+            chat.classList.add("chatroom-wrapper")
             chat.setAttribute("id", chatrooms[i].ChatroomId)
-            chat.setAttribute("onclick", "moveToChat(this)")
-            chat.innerHTML = `<div class="chatroom-name">${chatrooms[i].Name}</div>`  
+            
+            chat.innerHTML = `
+            <div class="chatroom" onclick="moveToChat(this)">
+                <div class="chatroom-name">${chatrooms[i].Name}</div>  
+            </div>
+            <button class="delete-button" onclick="deleteChatroom(this)">Удалить</button>
+            `  
             section.append(chat)
         }
     }
 }
 
-async function moveToChat(element) {
-    const chatId = element.getAttribute("id")
+async function deleteChatroom(element) {
+    const cid = element.parentElement.getAttribute("id")
 
+    const request = new Request(`http://localhost:3000/chatroom/${cid}/skadflj`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        mode: "cors",
+    })
+
+    const response = await (await fetch(request)).json()
+
+    console.log(response)
+
+    if (response.error == "") {
+        window.location.reload()
+    }
+} 
+
+async function moveToChat(element) {
+    const chatId = element.parentElement.getAttribute("id")
+    console.log(chatId)
     localStorage.setItem("chatroom_id", chatId)
 
     const request = new Request(`http://localhost:3000/user/enterChatroom/${chatId}/${localStorage.getItem("guid")}`, {
@@ -89,4 +116,5 @@ async function addChat() {
     const response = await (await fetch(request)).json()
 
     console.log(response)
+    window.location.reload()
 }

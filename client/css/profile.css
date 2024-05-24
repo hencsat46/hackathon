@@ -111,6 +111,10 @@ button.send-button {
     display: none;
 }
 
+.username-info input {
+    margin: 15px 20px;
+}
+
 @media screen and (max-width: 420px) {
 
     .person-info {
