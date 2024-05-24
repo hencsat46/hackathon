@@ -105,7 +105,7 @@ func (b *UserService) UpdatePassword(ctx context.Context, oldPassword, newPasswo
 		return err
 	}
 
-	if oldPassword != user.Password {
+	if hash.Hshr.Validate(user.Password, oldPassword) {
 		return e.ErrPasswordIncorrect
 	}
 
