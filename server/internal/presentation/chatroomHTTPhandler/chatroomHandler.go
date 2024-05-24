@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -36,8 +37,30 @@ func New(hubmngr *hubmanager.HubManager, chatroomBusiness IBusinessChatroom) *Ch
 	}
 }
 
+func (h *ChatroomHandler) GetChatroom(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*5)
+	defer cancel()
+
+	chatrooms, err := h.ChatroomBusiness.GetChatrooms(ctx)
+	if err != nil {
+		slog.Debug(err.Error())
+		return c.Status(http.StatusInternalServerError).JSON(entities.Response{
+			Error:   e.ErrInternalServerError.Error(),
+			Content: nil,
+		})
+	}
+
+	return c.Status(http.StatusOK).JSON(entities.Response{
+		Error:   "",
+		Content: chatrooms,
+	})
+
+}
+
 func (h *ChatroomHandler) CreateChatroom(c *fiber.Ctx) error {
 	var request entities.ChatroomDTO
+
+	log.Println(string(c.Request().Body()))
 
 	if err := c.BodyParser(&request); err != nil {
 		slog.Debug(err.Error())

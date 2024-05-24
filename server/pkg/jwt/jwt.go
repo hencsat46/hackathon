@@ -46,6 +46,7 @@ func (j *JWT) CreateToken(guid string) string {
 
 func (j *JWT) ValidateToken(next fiber.Handler) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+
 		authHeader := string(c.Request().Header.Peek(fasthttp.HeaderAuthorization))
 
 		if len(authHeader) == 0 {

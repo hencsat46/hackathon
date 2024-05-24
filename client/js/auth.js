@@ -7,7 +7,7 @@ async function send() {
         password: password,
     }
     
-    const request = new Request('http://localhost:3000/login_handler', {
+    const request = new Request('http://localhost:3000/user/login', {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -16,15 +16,11 @@ async function send() {
         body: JSON.stringify(dataObject)
     })
     
-    const response = (await fetch(request))
+    const response = await (await fetch(request)).json()
 
-    if (response.status == 200) {
-        document.querySelector('.password-invalid').style.display = 'none'
-        window.location.replace('http://localhost:3000/')
-    }
-
-    if (response.status == 400) {
-        document.querySelector('.password-invalid').style.display = 'block'
+    if (response.error == "") {
+        localStorage.setItem("token", response.content.token)
+        window.location.replace("http://localhost:5000/")
     }
 
 }
@@ -32,20 +28,25 @@ async function send() {
 function moveToSignup() {
     const signupHtml = `
     <div class="username">
-    <div class="username-header">Логин</div>
-    <input type="text" class="username-text">
-</div>
-<div class="password">
-    <div class="password-invalid">Неверный пароль</div>
-    <div class="password-header">Пароль</div>
-    <input type="password" class="password-text">
-</div>
-<div class="button-section">
-    <button class="submit" onclick="send()">Зарегистрироваться</button>
-</div>
-<div class="registration">
-    <a class="registration-link" onclick="moveToLogin()">Войти</a>
-</div>
+            <div class="exists">Такой пользователь существует</div>
+            <div class="username-header">Логин</div>
+            <input type="text" class="username-text">
+        </div>
+        <div class="password">
+            <div class="password-header">Пароль</div>
+            <input type="password" class="password-text">
+        </div>
+        <div class="password">
+            <div class="error">Пароли не совпадают</div>
+            <div class="password-header">Повторите пароль</div>
+            <input type="password" class="password-text">
+        </div>
+        <div class="button-section">
+        <button class="submit" onclick="signup()">Зарегистрироваться</button> 
+        </div>
+        <div class="registration">
+        <a class="registration-link" onclick="moveToLogin()">Войти</a>
+    </div>
     `
 
     const oldLogin = document.querySelector('div.login-section')
@@ -98,7 +99,7 @@ async function signup() {
 
     console.log(data)
 
-    const request = new Request('http://localhost:3000/signup_handler/', {
+    const request = new Request('http://localhost:3000/user/create/', {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -107,11 +108,14 @@ async function signup() {
         body: JSON.stringify(data)
     })
 
-    const response = await fetch(request)
-
-    if (response.status == 200) {
+    const response = await (await fetch(request)).json()
+    console.log(response.content)
+    localStorage.setItem("guid", response.content)
+    console.log(response.error)
+    if (response.error == "") {
+        console.log("hello")
         document.querySelector('.exists').style.display = 'none'
-        const request = new Request('http://localhost:3000/login_handler/', {
+        const request = new Request('http://localhost:3000/user/login/', {
             method: "POST",
             mode: 'cors',
             headers: {
@@ -119,9 +123,12 @@ async function signup() {
             },
             body: JSON.stringify(data),
         })
-        const response = await fetch(request)
-        if (response.status == 200) {
-            window.location.replace('http://localhost:3000/')
+        const response = await (await fetch(request)).json()
+        console.log(response)
+        
+        if (response.error == "") {
+            localStorage.setItem("token", response.content.token)
+            window.location.replace('http://localhost:5000/')
         }
         
     } else {

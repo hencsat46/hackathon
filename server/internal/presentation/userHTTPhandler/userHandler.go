@@ -113,8 +113,8 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(entities.Response{
 		Error: "",
 		Content: struct {
-			GUID  string `json:"token"`
-			Token string `json:"guid"`
+			GUID  string `json:"guid"`
+			Token string `json:"token"`
 		}{
 			GUID:  guid,
 			Token: token,

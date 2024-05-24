@@ -15,33 +15,38 @@
             <nav class="navbar">
                 <div class="links">
                     <a href="http://localhost:5000/" class="home">Home Page</a>
+                    
                     <a href="http://localhost:5000/profile" class="profile">Profile</a>
                 </div>
             </nav>
             <div class="chatrooms">
-                <section class="search">
-                    <input type="text" placeholder="Search...">
-                    <button class="button-search">Search</button>
+                <button class="create" onclick="addChatroom()">Добавить чат</button>
+                <section class="creation">
+                    <div class="name-title">Название чата</div>
+                    <div class="input-wrapper">
+                        <input type="text" class="name-input">
+                    </div>
+                    <button class="create-button" onclick="addChat()">Создать чат</button>
                 </section>
                 <section class="chatrooms-section">            
-                        <div class="chatroom">
-                            <div class="chatroom-name">ахахахах</div>  
+                        <!-- <div class="chatroom">
+                            <div class="chatroom-name">Чат 1</div>  
                         </div>
                         <div class="chatroom">
-                            <div class="chatroom-name">ахахахах2</div>
+                            <div class="chatroom-name">Универ</div>
                         </div>
                         <div class="chatroom">
-                            <div class="chatroom-name">ахахахах</div>  
+                            <div class="chatroom-name">Чат дома</div>  
                         </div>
                         <div class="chatroom">
-                            <div class="chatroom-name">ахахахах2</div>
+                            <div class="chatroom-name">Мама</div>
                         </div>
                         <div class="chatroom">
-                            <div class="chatroom-name">ахахахах</div>  
+                            <div class="chatroom-name">Папа</div>  
                         </div>
                         <div class="chatroom">
-                            <div class="chatroom-name">ахахахах2</div>
-                        </div>
+                            <div class="chatroom-name">Иван</div>
+                        </div> -->
                 </section>
             </div>
         </div>

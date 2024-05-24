@@ -67,6 +67,7 @@ func (h *HTTPhandler) bindRoutesAndMiddlewares() {
 
 	wsRoutes.Get("/:GUID/:cid", h.jwtMiddleware.ValidateToken(websocket.New(h.HandleWS)))
 
+	chatroomRoutes.Get("/get", h.jwtMiddleware.ValidateToken(h.GetChatroom))
 	chatroomRoutes.Post("/create", h.jwtMiddleware.ValidateToken(h.CreateChatroom))
 	chatroomRoutes.Put("/", h.jwtMiddleware.ValidateToken(h.UpdateChatroom))
 	chatroomRoutes.Delete("/:chatroomID/:GUID", h.jwtMiddleware.ValidateToken(h.DeleteChatroom))
