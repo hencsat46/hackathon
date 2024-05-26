@@ -42,7 +42,7 @@ func (dao *DataAccess) Login(ctx context.Context, userData models.User) (string,
 	slog.Debug(fmt.Sprintf("login user %v", userData))
 	coll := dao.mongoConnection.Database("ringo").Collection("users")
 
-	filter := bson.D{{"username", userData.Username}, {"password", userData.Password}}
+	filter := bson.D{{"username", userData.Username}}
 
 	mongoData := new(migrations.MongoUser)
 
@@ -138,4 +138,20 @@ func (dao *DataAccess) DeleteUser(ctx context.Context, GUID string) error {
 		return err
 	}
 	return nil
+}
+
+func (dao *DataAccess) GetUserByName(ctx context.Context, Username string) (*models.User, error) {
+	coll := dao.mongoConnection.Database("ringo").Collection("users")
+
+	filter := bson.M{"username": Username}
+
+	result := &models.User{}
+
+	if err := coll.FindOne(ctx, filter).Decode(&result); err != nil {
+		slog.Debug(err.Error())
+		return nil, err
+	}
+
+	slog.Debug(fmt.Sprintf("%v", result))
+	return result, nil
 }

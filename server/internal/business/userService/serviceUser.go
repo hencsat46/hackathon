@@ -25,6 +25,7 @@ type IDataAccessUser interface {
 	UpdatePassword(ctx context.Context, newPassword, GUID string) error
 	DeleteUser(ctx context.Context, GUID string) error
 	GetUser(ctx context.Context, GUID string) (*models.User, error)
+	GetUserByName(ctx context.Context, Username string) (*models.User, error)
 	EnterChatroom(ctx context.Context, guid, cid string) error
 	QuitChatroom(ctx context.Context, guid, cid string) error
 }
@@ -48,10 +49,11 @@ func (b *UserService) FetchUserChatrooms(ctx context.Context, GUID string) ([]mo
 }
 
 func (b *UserService) Login(ctx context.Context, user models.User) (string, error) {
-	usr, err := b.UserDao.GetUser(ctx, user.GUID)
+	usr, err := b.UserDao.GetUserByName(ctx, user.Username)
 	if err != nil {
 		slog.Debug(err.Error())
 	}
+	slog.Debug(fmt.Sprintf("%v SUKAAAAAAAA", usr))
 
 	if !hash.Hshr.Validate(usr.Password, user.Password) {
 		return "", e.ErrPasswordIncorrect
