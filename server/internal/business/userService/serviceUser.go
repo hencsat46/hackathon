@@ -53,7 +53,7 @@ func (b *UserService) Login(ctx context.Context, user models.User) (string, erro
 		slog.Debug(err.Error())
 	}
 
-	if hash.Hshr.Validate(usr.Password, user.Password) {
+	if !hash.Hshr.Validate(usr.Password, user.Password) {
 		return "", e.ErrPasswordIncorrect
 	}
 
@@ -105,7 +105,7 @@ func (b *UserService) UpdatePassword(ctx context.Context, oldPassword, newPasswo
 		return err
 	}
 
-	if hash.Hshr.Validate(user.Password, oldPassword) {
+	if !hash.Hshr.Validate(user.Password, oldPassword) {
 		return e.ErrPasswordIncorrect
 	}
 
