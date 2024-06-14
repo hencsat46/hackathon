@@ -52,6 +52,7 @@ func (b *UserService) Login(ctx context.Context, user models.User) (string, erro
 	usr, err := b.UserDao.GetUserByName(ctx, user.Username)
 	if err != nil {
 		slog.Debug(err.Error())
+		return "", e.ErrUserDoesNotExists
 	}
 	slog.Debug(fmt.Sprintf("%v SUKAAAAAAAA", usr))
 
@@ -73,7 +74,15 @@ func (b *UserService) CreateUser(ctx context.Context, user models.User) (string,
 
 	user.Password = hash.Hshr.Hash(user.Password)
 
-	err := b.UserDao.CreateUser(ctx, user)
+	usr, err := b.UserDao.GetUserByName(ctx, user.Username)
+	if err != nil {
+		slog.Debug(err.Error())
+	}
+	if usr != nil {
+		return "", e.ErrSuchUserAlreadyExists
+	}
+
+	err = b.UserDao.CreateUser(ctx, user)
 	if err != nil {
 		slog.Debug(err.Error())
 		return "", err
@@ -111,6 +120,7 @@ func (b *UserService) UpdatePassword(ctx context.Context, oldPassword, newPasswo
 		return e.ErrPasswordIncorrect
 	}
 
+	newPassword = hash.Hshr.Hash(newPassword)
 	if err := b.UserDao.UpdatePassword(ctx, newPassword, GUID); err != nil {
 		slog.Debug(err.Error())
 		return err

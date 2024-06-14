@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/profile.css">
-    <script src="../js/profile.js"></script>
+    <script defer src="../js/profile.js"></script>
     <title>Profile</title>
 </head>
 <body>
@@ -20,29 +20,24 @@
             <div class="username-info">
                 <div class="username-wrapper">
                     <div class="username-title">Username</div>
-                    <div class="username-text">Kalugin_Ilya</div>
+                    <div class="username-text" id="username"></div>
                 </div>
-                <button class="username-change">Изменить</button>
-                <input type="text" class="supdate-username">
+                <button class="username-change" onclick="updateUsername()">Изменить</button>
+                <input type="text" class="supdate-username" placeholder="your new username" id="newUsername">
             </div>
             <div class="password-info">
                 <div class="password-wrapper">
                     <div class="password-title">Password</div>
                     <div class="password-text">Скрыто</div>
                 </div>
-                <button class="password-change">Изменить</button>
+                <button class="password-change" onclick="updatePassword()">Изменить</button>
+                <input type="password" class="supdate-username" placeholder="old password" id="oldPassword">
+                <input type="text" class="supdate-username" placeholder="new password" id="newPassword">
                 
             </div>
-            <div class="email-info">
-                <div class="email-wrapper">
-                    <div class="email-title">Email</div>
-                    <div class="email-text">example-mail@mail.com</div>
-                </div>
-                <button class="email-change">Изменить</button>
-            </div>
             <div class="ex-buttons">
-                <button class="quit-button">Выйти</button>
-                <button class="delete-button">Удалить аккаунт</button>
+                <button class="quit-button" onclick="logout()">Выйти</button>
+                <button class="delete-button" onclick="deleteAcc()">Удалить аккаунт</button>
             </div>
         </div>
     </div>

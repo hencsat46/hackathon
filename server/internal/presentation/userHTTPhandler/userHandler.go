@@ -65,8 +65,8 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	guid, err := h.UserService.CreateUser(ctx, user)
 	if err != nil {
 		slog.Debug(err.Error())
-		return c.Status(http.StatusInternalServerError).JSON(entities.Response{
-			Error:   e.ErrInternalServerError.Error(),
+		return c.Status(http.StatusBadRequest).JSON(entities.Response{
+			Error:   err.Error(),
 			Content: nil,
 		})
 	}
@@ -102,8 +102,8 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 	guid, err := h.UserService.Login(ctx, userEntity)
 	if err != nil {
 		slog.Debug(err.Error())
-		return c.Status(http.StatusInternalServerError).JSON(entities.Response{
-			Error:   e.ErrInternalServerError.Error(),
+		return c.Status(http.StatusBadRequest).JSON(entities.Response{
+			Error:   err.Error(),
 			Content: nil,
 		})
 	}

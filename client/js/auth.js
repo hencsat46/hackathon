@@ -21,7 +21,10 @@ async function send() {
     if (response.error == "") {
         localStorage.setItem("token", response.content.token)
         localStorage.setItem("guid", response.content.guid)
+        localStorage.setItem("username", username)
         window.location.replace("http://localhost:5000/")
+    } else {
+        alert("such user does not exists")
     }
 
 }
@@ -112,8 +115,9 @@ async function signup() {
     const response = await (await fetch(request)).json()
     console.log(response.content)
     localStorage.setItem("guid", response.content)
+    localStorage.setItem("username", username)
     console.log(response.error)
-    if (response.error == "") {
+    if (response.error === "") {
         console.log("hello")
         document.querySelector('.exists').style.display = 'none'
         const request = new Request('http://localhost:3000/user/login/', {
@@ -133,9 +137,7 @@ async function signup() {
         }
         
     } else {
-        if (response.status == 400) {
-            document.querySelector('.exists').style.display = 'block'
-        }
+        alert('such user already exists')
     }
 
 }

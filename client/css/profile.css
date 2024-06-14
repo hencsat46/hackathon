@@ -38,6 +38,11 @@
 
 }
 
+.links a:hover {
+    border-color: rgb(85, 83, 83);
+    /* background-color: rgb(229, 229, 229); */
+}
+
 .home {
     padding-left: 10px;
 }
@@ -165,4 +170,8 @@ button.send-button {
         margin-left: 0px;
         max-width: 160px;
     }
+}
+
+.supdate-username {
+    margin: 15px 20px;
 }
